@@ -1,0 +1,66 @@
+{
+  "project_info": {
+    "project_number": "300437251666",
+    "firebase_url": "https://boatcontrol-15b9e.firebaseio.com",
+    "project_id": "boatcontrol-15b9e",
+    "storage_bucket": "boatcontrol-15b9e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:300437251666:android:63410e14540e840b",
+        "android_client_info": {
+          "package_name": "com.mast.boatcontrol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "300437251666-recjkjot9ce1mm7pfo1guq76tt4pt2b9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mast.boatcontrol",
+            "certificate_hash": "987a51f69e90acea1461a86513b40de8412d526b"
+          }
+        },
+        {
+          "client_id": "300437251666-uh1pqo60a2r5bdtv6c2kualb8gv0qm8g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mast.boatcontrol",
+            "certificate_hash": "85ec98a2ffa32ec26f9ec8d78257438a4a582ac8"
+          }
+        },
+        {
+          "client_id": "300437251666-5m2h4so6nq0iia3skoqmhruvrjodc5da.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2cwO_f4XiJHogzEWV50LiOUnO2chzBfs"
+        },
+        {
+          "current_key": "AIzaSyDrU89bLBpqE6SSTMnCT1IJN4K6wEeC0IU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "300437251666-5m2h4so6nq0iia3skoqmhruvrjodc5da.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

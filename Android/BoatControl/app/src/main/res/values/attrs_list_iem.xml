@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="ListItem">
+        <attr name="itemTitle" format="string" />
+        <attr name="itemText" format="string" />
+    </declare-styleable>
+</resources>

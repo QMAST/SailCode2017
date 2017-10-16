@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mast.boatcontrol">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+        android:name=".MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:screenOrientation="fullSensor"
+        android:supportsRtl="false"
+        android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Mast.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
+                android:resource="@xml/device_filter" />
+        </activity>
+        <activity
+            android:name=".SailPlansActivity"
+            android:label="@string/title_activity_sail_plans"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mast.boatcontrol.MainActivity" />
+        </activity>
+        <activity
+            android:name=".NewSailPlanActivity"
+            android:label="@string/title_activity_new_sail_plans"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mast.boatcontrol.MainActivity" />
+        </activity>
+        <activity
+            android:name=".RCActivity"
+            android:label="@string/title_activity_rcavtivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.mast.boatcontrol.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SelectWPDialog"
+            android:label="@string/title_activity_selectwp"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <activity android:screenOrientation="landscape" android:configChanges="orientation|keyboardHidden" android:name=".RemoteActivity"></activity>
+    </application>
+
+</manifest>

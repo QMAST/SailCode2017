@@ -1,0 +1,120 @@
+<resources>
+    <string name="app_name">Boat Control</string>
+    <string-array name="modes_array">
+        <item>Command line mode</item>
+        <item>RC mode</item>
+        <item>Autonomous mode</item>
+    </string-array>
+    <string-array name="list_titles">
+        <item>General</item>
+        <item>Status</item>
+        <item>Heading</item>
+        <item>Wind</item>
+        <item>Location</item>
+        <item>Last Transmission</item>
+        <item>Mega</item>
+        <item>Mode</item>
+        <item>Mega Uptime</item>
+        <item>Mega Available Memory</item>
+        <item>Autosail</item>
+        <item>Status</item>
+        <item>Next Waypoint</item>
+        <item>Angle to Next Waypoint</item>
+        <item>Sensors and Diagnostics</item>
+        <item>Temperature</item>
+        <item>Sails Position</item>
+        <item>Pixy Servo</item>
+        <item>Pixy</item>
+        <item>Left Stick X</item>
+        <item>Right Stick Y</item>
+    </string-array>
+    <string-array name="list_tags">
+        <item>GENERAL</item>
+        <item>STATUS</item>
+        <item>HEADING</item>
+        <item>WIND</item>
+        <item>LOCATION</item>
+        <item>LAST_TRANSMISSION</item>
+        <item>MEGA</item>
+        <item>MODE</item>
+        <item>MEGA_UPTIME</item>
+        <item>MEGA_MEMORY</item>
+        <item>AUTO</item>
+        <item>AUTO_STATUS</item>
+        <item>TARGET</item>
+        <item>TARGET_ANGLE</item>
+        <item>SENSORS</item>
+        <item>TEMPERATURE</item>
+        <item>ENCODER</item>
+        <item>SERVO_PIXY</item>
+        <item>PIXY</item>
+        <item>RSX</item>
+        <item>RSY</item>
+    </string-array>
+    <string-array name="list_subtitles">
+        <item></item>
+        <item>Waiting for response</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item></item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item></item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item></item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+        <item>Unknown</item>
+    </string-array>
+    <integer-array name="list_types">
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>0</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+        <item>1</item>
+    </integer-array>
+    <string-array name="list_autosail_modes">
+        <item>Single Destination</item>
+        <item>Multiple Destinations</item>
+        <item>Sailbot 2017 - Station Keeping</item>
+        <item>Sailbot 2017 - Search</item>
+    </string-array>
+    <string-array name="list_autosail_descriptions">
+        <item>Navigate to a destination and stay there.</item>
+        <item>Navigate through a circuit with the choice to stay at the final waypoint or loop to the beginning again.</item>
+        <item>Navigate to a geofenced box, autonomously stay inside for 5 minutes and then exit the box.</item>
+        <item>Performs a expanding square search pattern while using the Pixy to detect a buoy. Once located, it will navigate to the buoy and stay there.</item>
+    </string-array>
+    <string name="title_activity_sail_plans">Sail Plans</string>
+    <string name="title_activity_new_sail_plans">Edit Sail Plan</string>
+    <string name="preference_file_key">com.mast.boatcontrol.PREFERENCE_FILE_KEY</string>
+    <string name="title_activity_rcavtivity">RCAvtivity</string>
+    <string name="title_activity_selectwp">Add Waypoint</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+</resources>

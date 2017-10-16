@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/cardview_dark_background"
+    tools:context="com.mast.boatcontrol.RemoteActivity">
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/fbHUD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:paddingBottom="@dimen/listitem_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/listitem_vertical_margin"
+        app:justifyContent="space_around">
+
+        <RelativeLayout
+            android:id="@+id/rlWind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivWind"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:tint="@color/colorWhite"
+                app:srcCompat="@drawable/ic_wind" />
+
+            <TextView
+                android:id="@+id/tvWindCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/ivWind"
+                android:text="WIND"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvWind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvWindCaption"
+                android:layout_toRightOf="@id/ivWind"
+                android:text="Unknown"
+                android:textColor="@color/colorWhite"
+
+                android:textSize="20sp"
+
+                />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlHeading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivHeading"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:tint="@color/colorWhite"
+                app:srcCompat="@drawable/ic_radio" />
+
+            <TextView
+                android:id="@+id/tvHeadingCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/ivHeading"
+                android:text="HEADING"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvHeadingCaption"
+                android:layout_toRightOf="@id/ivHeading"
+                android:text="Unknown"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlConnection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/ivConnection"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:tint="@color/colorWhite"
+                app:srcCompat="@drawable/ic_remote" />
+
+            <TextView
+                android:id="@+id/tvConnectionCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/ivConnection"
+                android:text="LAST RESPONSE"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvConnection"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tvConnectionCaption"
+                android:layout_toRightOf="@id/ivConnection"
+                android:text="Waiting"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp" />
+        </RelativeLayout>
+    </com.google.android.flexbox.FlexboxLayout>
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/fbControls"
+        android:paddingBottom="@dimen/listitem_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/listitem_vertical_margin"
+        app:justifyContent="space_between">
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSailsCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SAILS"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100% wound"
+                android:textColor="@color/colorWhite"
+                android:textSize="24sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom">
+
+                <SeekBar
+                    android:id="@+id/sbSails"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:progress="100"
+                    android:max="100" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvRuddersCaption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RUDDERS"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvRudders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Joystick Control"
+                android:textColor="@color/colorWhite"
+                android:textSize="24sp" />
+
+            <io.github.controlwear.virtual.joystick.android.JoystickView xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                custom:JV_backgroundColor="@color/colorPrimaryDark"
+                custom:JV_borderColor="@color/colorNavRoute"
+                custom:JV_borderWidth="0dp"
+                custom:JV_buttonColor="@color/colorAccent"
+                custom:JV_buttonSizeRatio="15%"
+                custom:JV_fixedCenter="false" />
+        </LinearLayout>
+    </com.google.android.flexbox.FlexboxLayout>
+</LinearLayout>

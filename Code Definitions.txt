@@ -1,0 +1,60 @@
+﻿Comms Draft v1
+
+Use this standard format to communicate with the boat over Serial/XBee. Do not send line endings or include commas in your data. Separate commands with a semicolon. The boat will echo all commands sent with the inclusion of RESPONSE_CODE.
+
+Outbound (Device -> Boat) Transmissions:
+    "DATA_CODE,DATA;"
+Inbound (Boat -> Device) Transmissions:
+    "DATA_CODE,RESPONSE_CODE,DATA;"
+
+Definitions:
+    DATA_CODE: Two digits acting as the "subject" of the transmission.
+        10: (-> Device) General information or errors not fitting into the other category. Priority depends on the RESPONSE_CODE and range from writing in terminal to a pop-up message.
+        11: (-> Device) Current location of boat. Data takes the format of "LAT LONG. LAT and LONG are the latitude and longitude.
+        12: (-> Device) Current wind direction
+        13: (-> Device) Current boat heading
+        14: (-> Device) Mega uptime
+        15: (-> Device) Mega available memory
+
+        20: (-> Boat) Sets waypoint. Data takes the format of "INDEX LAT LONG". INDEX is a number between 0-10 (The boat stores 20 waypoints). LAT and LONG are the latitude and longitude.
+        21: (-> Boat) Change Mode (data: 0 = cli, 1 = RC, 2 = autosail)
+        22: (-> Boat) Request waypoint
+            (-> Device) Waypoint. Data takes the format of "INDEX LAT LONG".
+        23: (-> Boat) Select START_INDEX waypoint to go to.
+        24: (-> Boat) Select FINISH_INDEX waypoint to go to.
+
+        30: (-> Boat) Stop and lock all motors
+        31: (-> Boat) Request unlock of both motors
+        32: (-> Boat) Moves rudder to target position [-1000 1000]
+        33: (-> Boat) Moves winch to target speed [-1000 1000]
+        34: (-> Boat) Moves winch to absolute position, number of encoder ticks
+        35: (-> Boat) Moves winch to relative position, number of encoder ticks
+        36: (-> Boat) Calibrate winch to 0 position
+	      37: (-> Boat) Begin RC calibration, Stage 1 (data: 1), Stage 2 (data: 2), Stage 3 (data: 3)
+            (-> Device) Display calibration stage, exit calibration depending on data
+
+        40: (-> Boat) Set autosail mode type (ex. stationkeep, track, etc) (data: 0 = simple, 1 = search, 2 = stationkeep)
+        41: (-> Device) Current navscore
+        42: (-> Device) Current windscore
+        43: (-> Device) Current directionscore
+        44: (-> Device) Vectors to goal (Data: angle to waypoint, long vector, lat vector)
+	      45: (-> Device) General messages about autosail status
+        46: (-> Device) Next waypoint
+
+        50: (-> Device) Pololu HPMC Temperature
+        51: (-> Device) Battery voltage data
+        52: (-> Device) Battery current data
+        53: (-> Device) Charger voltage data
+	      54: (-> Device) Charger current data
+        55: (-> Device) Winch Encoder Ticks
+        56: (-> Boat) Multistage winch calibration
+        57: (-> Device) Barnacle latency
+
+        60: (-> Device) Pixy servo position
+        61: (-> Device) Pixy detected object degree
+                RESPONSE_CODE 200: Reporting degree of object
+                RESPONSE_CODE 204: No buoy detected
+	       62: (-> Boat) Trigger LEDs
+
+    RESPONSE_CODE: Three digits notifying the device of the execution of the command previously sent to the boat. Alternatively provides information type.
+    DATA: The "message" portion of the transmission. Can be a string of text(ex. coordinates) or a 0/1 representation of a boolean(ex. on/off)

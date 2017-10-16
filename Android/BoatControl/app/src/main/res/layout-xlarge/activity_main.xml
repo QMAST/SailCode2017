@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/colorWhite"
+    android:orientation="horizontal"
+    tools:context="com.mast.boatcontrol.MainActivity">
+
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toLeftOf="@id/svMain"
+        android:layout_weight="3"
+        app:cameraZoom="15" />
+
+    <ScrollView
+        android:id="@+id/svMain"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:background="@color/colorWhite">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/llTransmitterError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F44336"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal"
+                android:paddingBottom="@dimen/listitem_vertical_margin"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/listitem_vertical_margin">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tvTransmitterError"
+                    android:layout_gravity="center_vertical"
+                    android:text="Transmitter not connected"
+                    android:textColor="@color/colorWhite" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llMenu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:text="Device Menu"
+                    android:textSize="30sp" />
+
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/fbOrgButtons"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    app:alignItems="flex_start"
+                    app:flexWrap="wrap"
+                    app:justifyContent="space_between">
+
+                    <com.mast.boatcontrol.models.DashboardIconView
+                        android:id="@+id/divDash"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        app:cc_background="@drawable/ic_radio"
+                        app:cc_label="Telemetry" />
+
+                    <com.mast.boatcontrol.models.DashboardIconView
+                        android:id="@+id/divAuto"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        app:cc_background="@drawable/ic_infinity"
+                        app:cc_label="Start Autosail" />
+
+                    <com.mast.boatcontrol.models.DashboardIconView
+                        android:id="@+id/divEmergStop"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        app:cc_background="@drawable/ic_emerg"
+                        app:cc_label="Force Stop" />
+
+                    <com.mast.boatcontrol.models.DashboardIconView
+                        android:id="@+id/divMotorLock"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        app:cc_background="@drawable/ic_unlock"
+                        app:cc_label="Unlock Motors" />
+
+                    <com.mast.boatcontrol.models.DashboardIconView
+                        android:id="@+id/divCalibrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        app:cc_background="@drawable/ic_remote"
+                        app:cc_label="Calibrate RC" />
+
+                    <com.mast.boatcontrol.models.DashboardIconView
+                        android:id="@+id/divLEDs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        app:cc_background="@drawable/ic_led"
+                        app:cc_label="Trigger LEDs" />
+                </com.google.android.flexbox.FlexboxLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llMain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:visibility="gone"
+        app:umanoFadeColor="@color/colorPrimary"
+        app:umanoPanelHeight="250dp"
+        app:umanoParallaxOffset="100dp"
+        app:umanoScrollableView="@+id/svMain"
+        app:umanoShadowHeight="0dp" />
+
+</LinearLayout>

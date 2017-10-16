@@ -1,0 +1,51 @@
+<Pixy_parameters>
+ <data value="gQCwgSAAAABrKAAA9zAAALAsAAAb/v//AQAAAA7///8nJ2UAAAAAAA==" key="signature1" type="INT8_ARRAY"/>
+ <data value="3" key="Signature 1 range" type="FLOAT32"/>
+ <data value="" key="Signature label 1" type="STRING"/>
+ <data value="gQgBgSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" key="signature2" type="INT8_ARRAY"/>
+ <data value="3" key="Signature 2 range" type="FLOAT32"/>
+ <data value="" key="Signature label 2" type="STRING"/>
+ <data value="gQgBgSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" key="signature3" type="INT8_ARRAY"/>
+ <data value="3" key="Signature 3 range" type="FLOAT32"/>
+ <data value="" key="Signature label 3" type="STRING"/>
+ <data value="gQgBgSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" key="signature4" type="INT8_ARRAY"/>
+ <data value="3" key="Signature 4 range" type="FLOAT32"/>
+ <data value="" key="Signature label 4" type="STRING"/>
+ <data value="gQgBgSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" key="signature5" type="INT8_ARRAY"/>
+ <data value="3" key="Signature 5 range" type="FLOAT32"/>
+ <data value="" key="Signature label 5" type="STRING"/>
+ <data value="gQgBgSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" key="signature6" type="INT8_ARRAY"/>
+ <data value="3" key="Signature 6 range" type="FLOAT32"/>
+ <data value="" key="Signature label 6" type="STRING"/>
+ <data value="gQgBgSAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==" key="signature7" type="INT8_ARRAY"/>
+ <data value="3" key="Signature 7 range" type="FLOAT32"/>
+ <data value="" key="Signature label 7" type="STRING"/>
+ <data value="0.1" key="Min brightness" type="FLOAT32"/>
+ <data value="1.8" key="Color code multiplier" type="FLOAT32"/>
+ <data value="1" key="Color code mode" type="INT8"/>
+ <data value="2000" key="Signature teach threshold" type="INT32"/>
+ <data value="750" key="LED brightness" type="INT16"/>
+ <data value="1000" key="Max blocks" type="INT16"/>
+ <data value="1000" key="Max blocks per signature" type="INT16"/>
+ <data value="20" key="Min block area" type="INT32"/>
+ <data value="0" key="Data out port" type="INT8"/>
+ <data value="84" key="I2C address" type="INT8"/>
+ <data value="19200" key="UART baudrate" type="INT32"/>
+ <data value="80" key="Camera Brightness" type="INT8"/>
+ <data value="1" key="Auto Exposure Correction" type="INT8"/>
+ <data value="0" key="AEC Value" type="INT32"/>
+ <data value="0" key="Auto White Balance" type="INT8"/>
+ <data value="1" key="Auto White Balance on power-up" type="INT8"/>
+ <data value="0" key="AWB Value" type="INT32"/>
+ <data value="-200" key="S0 lower limit" type="INT16"/>
+ <data value="200" key="S0 upper limit" type="INT16"/>
+ <data value="-200" key="S1 lower limit" type="INT16"/>
+ <data value="200" key="S1 upper limit" type="INT16"/>
+ <data value="60" key="Servo frequency" type="INT16"/>
+ <data value="350" key="Pan P gain" type="INT32"/>
+ <data value="600" key="Pan D gain" type="INT32"/>
+ <data value="500" key="Tilt P gain" type="INT32"/>
+ <data value="700" key="Tilt D gain" type="INT32"/>
+ <data value="0" key="Startup program" type="INT8"/>
+ <data value="0" key="Debug" type="INT8"/>
+</Pixy_parameters>

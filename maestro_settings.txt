@@ -1,0 +1,27 @@
+<!--Pololu Maestro servo controller settings file, http://www.pololu.com/catalog/product/1350-->
+<UscSettings version="1">
+  <NeverSuspend>false</NeverSuspend>
+  <SerialMode>UART_FIXED_BAUD_RATE</SerialMode>
+  <FixedBaudRate>9600</FixedBaudRate>
+  <SerialTimeout>0</SerialTimeout>
+  <EnableCrc>false</EnableCrc>
+  <SerialDeviceNumber>11</SerialDeviceNumber>
+  <SerialMiniSscOffset>0</SerialMiniSscOffset>
+  <Channels ServosAvailable="6" ServoPeriod="156">
+    <!--Period = 19.968 ms-->
+    <!--Channel 0-->
+    <Channel name="Pixy" mode="Servo" min="256" max="9152" homemode="Off" home="256" speed="0" acceleration="0" neutral="6272" range="1905" />
+    <!--Channel 1-->
+    <Channel name="Rudder" mode="Servo" min="4032" max="6400" homemode="Off" home="4032" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <!--Channel 2-->
+    <Channel name="Rudder" mode="Servo" min="4224" max="6592" homemode="Off" home="4224" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <!--Channel 3-->
+    <Channel name="" mode="Servo" min="4032" max="9600" homemode="Off" home="4032" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <!--Channel 4-->
+    <Channel name="" mode="Servo" min="4032" max="8000" homemode="Off" home="4032" speed="0" acceleration="0" neutral="6000" range="1905" />
+    <!--Channel 5-->
+    <Channel name="" mode="Servo" min="4032" max="9088" homemode="Off" home="4032" speed="0" acceleration="0" neutral="4032" range="1905" />
+  </Channels>
+  <Sequences />
+  <Script ScriptDone="true" />
+</UscSettings>

@@ -1,0 +1,12 @@
+<resources>
+    <declare-styleable name="DashboardIconView">
+        <attr name="cc_label" format="string" />
+        <attr name="cc_background" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="SquareIcon">
+        <attr name="exampleString" format="string" />
+        <attr name="exampleDimension" format="dimension" />
+        <attr name="exampleColor" format="color" />
+        <attr name="exampleDrawable" format="color|reference" />
+    </declare-styleable>
+</resources>

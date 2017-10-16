@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_radio"
+        android:title="Telemetry" />
+
+    <item
+        android:id="@+id/navigation_mode"
+        android:icon="@drawable/ic_remote"
+        android:title="Change Mode" />
+
+    <item
+        android:id="@+id/navigation_autosail"
+        android:icon="@drawable/ic_infinity"
+        android:title="Autosail" />
+
+</menu>
