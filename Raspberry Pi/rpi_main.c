@@ -10,6 +10,7 @@
 
 #define SERIAL_PORT "/dev/ttyACM0"  // TODO: Pass in as command line option?
 #define BAUD_RATE B57600
+// TODO: Add global variables to be used in the sail logic
 
 int set_interface_attributes(int fd)
 {
@@ -65,14 +66,107 @@ int main(int argc, char *argv[])
     {
         char buf[1] = {};
         int n = read(fd, buf, 1);
-
+		char* subject;
+		char* message;
+		int j=0, i=0;
+		//2 while loops used to ensure that string being read is between 2 ;'s
+		//May need to be updated in testing
+		while(buf[j]!=';')
+		{
+			j++;
+		}
         printf("Bytes read: %i, buffer contains:\n", n);
-        for (int i = 0; i < n; i++)
-        {
-            printf("%i\n", buf[i]);
-        }
+		char subject[0]= buf[j+1];
+		char subject[1]= buf[j+2];
+		while(buf[j]!=';')
+		{
+			message[i]=buf[j];
+			j++;
+			i++;
+		}
+		//TODO: Fill out else ifs to assign sensor values, perform diagnostic features and to configure autopilot. Some need to call tranmsit function to send
+		//infor back to the mega
+		//Basic Sensors
+		//GPS
+		if(strcmp(subject, "GP"))
+		{
+			
+		}
+		//Compas
+		if(strcmp(subject, "CP"))
+		{
+			
+		}
+		//Temperature
+		else if(strcmp(subject, "TM"))
+		{
+			
+		}
+		//Wind Vane
+		else if(strcmp(subject, "WV"))
+		{
+			
+		}
+		//Pixy
+		else if(strcmp(subject, "PX"))
+		{
+			
+		}
+		//Lidar
+		else if(strcmp(subject, "LD"))
+		{
+			
+		}
+		//Diagnostic and basic features
+		//Device Online/Mode
+		else if(strcmp(subject, "00"))
+		{
+			
+		}
+		//Device Powered on
+		else if(strcmp(subject, "01"))
+		{
+			
+		}
+		//Mega Error
+		else if(strcmp(subject, "08"))
+		{
+			
+		}
+		//Autopilot Features
+		//Enable/Disable Autopilot
+		else if(strcmp(subject, "A0"))
+		{
+			
+		}
+		//Autopilot mode
+		else if(strcmp(subject, "A1"))
+		{
+			
+		}
+		//Waypoint
+		else if(strcmp(subject, "A2"))
+		{
+			
+		}
+		//Active waypoint range
+		else if(strcmp(subject, "A3"))
+		{
+			
+		}
+		
+		
         usleep(500000);
     }
     close(fd);
     return 0;
+//TODO: Complete function to transmit back to the mega given the inputs
+void transmit(char* subject, char* message)
+{
+	
+}
+//TODO: Copy over and update Navscore from old sailcode arduino code
+void sailLogic()
+{
+	
 }
