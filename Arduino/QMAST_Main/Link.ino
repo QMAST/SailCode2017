@@ -21,11 +21,11 @@ void initLink() {
 
 //
 void sendTransmission(int port, String code, String message) {
-  if (port == SERIAL_PORT_RPI) {
+  if (port == PORT_RPI) {
     SERIAL_PORT_RPI.print(code);
     SERIAL_PORT_RPI.print(message);
-    SERIAL_PORT_RPI.print(F(";"));
-  } else if (port == SERIAL_PORT_XBEE) {
+    SERIAL_PORT_RPI.println(F(";"));
+  } else if (port == PORT_XBEE) {
     SERIAL_PORT_XBEE.print(code);
     SERIAL_PORT_XBEE.print(message);
     SERIAL_PORT_XBEE.print(F(";"));
@@ -40,13 +40,13 @@ void executeXBeeTransmission(String code, String data) {
   bool error = false;
   if (code.equals("A0")) {
     // Relay autopilot request to RPi
-    sendTransmission(SERIAL_PORT_RPI, code, data);
+    sendTransmission(PORT_RPI, code, data);
     if (data.equals("0")) setAutopilot(false); // Exit autopilot without waiting for RPi response
   } else if (code.equals("A1") || code.equals("A2") || code.equals("A3")) {
     // Messages sent by the XBee to be relayed to RPi transparently
-    sendTransmission(SERIAL_PORT_RPI, code, data);
+    sendTransmission(PORT_RPI, code, data);
   } else {
-    executeCommonTransmission(SERIAL_PORT_XBEE, code, data);
+    executeCommonTransmission(PORT_XBEE, code, data);
   }
 }
 
@@ -57,9 +57,9 @@ void executeRPiTransmission(String code, String data) {
     if (data.equals("0")) setAutopilot(false); // Exit autopilot
   } else if (code.equals("05") || code.equals("07") || code.equals("A1") || code.equals("A2") || code.equals("A3") || code.equals("A8") || code.equals("A9")) {
     // Messages sent by the RPi to be relayed to XBee transparently
-    sendTransmission(SERIAL_PORT_XBEE, code, data);
+    sendTransmission(PORT_XBEE, code, data);
   } else {
-    executeCommonTransmission(SERIAL_PORT_RPI, code, data);
+    executeCommonTransmission(PORT_RPI, code, data);
   }
 }
 

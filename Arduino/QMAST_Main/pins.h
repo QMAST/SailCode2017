@@ -11,11 +11,14 @@
 
 // Raspberry Pi
 #define SERIAL_PORT_RPI             Serial2
-#define SERIAL_BAUD_RPI             57600
+#define SERIAL_BAUD_RPI             9600
 
 // GPS
 #define SERIAL_PORT_GPS             Serial3
 #define SERIAL_BAUD_GPS             9600
+
+#define PORT_RPI                    1
+#define PORT_XBEE                   2
 
 // Remote control (Spektrum)
 #define PIN_RC_CH1                  22

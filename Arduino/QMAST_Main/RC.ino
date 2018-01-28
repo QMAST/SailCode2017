@@ -33,19 +33,27 @@ void setRCEnabled(bool state) {
 }
 
 void updateRCWinch() {
-  int winchPos = pulseIn(CHANNEL_WINCH, HIGH);
-  winchPos = constrain(winchPos, WINCH_PULSE_LOW, WINCH_PULSE_HIGH); //Trim bottom and upper end
-  moveWinch(winchPos);
+  int winchPos = pulseIn(CHANNEL_WINCH, HIGH, 1000);
+  if (winchPos == 0) {
+    //Serial.println("RC OFF");
+  } else {
+    winchPos = constrain(winchPos, WINCH_PULSE_LOW, WINCH_PULSE_HIGH); //Trim bottom and upper end
+    moveWinch(winchPos);
+  }
 }
 
 void updateRCRudders() {
-  int rudderPos = pulseIn(CHANNEL_RUDDERS, HIGH);
-  rudderPos = constrain(rudderPos, RUDDER_PULSE_LOW, RUDDER_PULSE_HIGH); //Trim bottom and upper end
-  const int RudderMiddle = 0.5 * RUDDER_PULSE_HIGH + 0.5 * RUDDER_PULSE_LOW;
-  if (rudderPos <= (RudderMiddle + RUDDER_DEAD_WIDTH / 2) && rudderPos >= (RudderMiddle - RUDDER_DEAD_WIDTH / 2)) { //Create Dead-Band
-    rudderPos = RudderMiddle; // calculate the middle
+  int rudderPos = pulseIn(CHANNEL_RUDDERS, HIGH, 1000);
+  if (rudderPos == 0) {
+    //Serial.println("RC OFF");
+  } else {
+    rudderPos = constrain(rudderPos, RUDDER_PULSE_LOW, RUDDER_PULSE_HIGH); //Trim bottom and upper end
+    const int RudderMiddle = 0.5 * RUDDER_PULSE_HIGH + 0.5 * RUDDER_PULSE_LOW;
+    if (rudderPos <= (RudderMiddle + RUDDER_DEAD_WIDTH / 2) && rudderPos >= (RudderMiddle - RUDDER_DEAD_WIDTH / 2)) { //Create Dead-Band
+      rudderPos = RudderMiddle; // calculate the middle
+    }
+    moveRudder(rudderPos);
   }
-  moveRudder(rudderPos);
 }
 
 void checkRC() {

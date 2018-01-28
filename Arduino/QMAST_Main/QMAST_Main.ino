@@ -7,8 +7,6 @@
   Created in December 2017, QMAST
 */
 
-#define DEFAULT_SENSOR_TRANSMILLIS 3000 // Default interval the Mega transmits sensor data
-
 #include "pins.h"
 
 // Variables related to hearbeat and connection status
@@ -26,6 +24,8 @@ void setup() {
   SERIAL_PORT_XBEE.begin(SERIAL_BAUD_XBEE);
   SERIAL_PORT_RPI.begin(SERIAL_BAUD_RPI);
 
+  SERIAL_PORT_CONSOLE.println("Powered on");
+
   initLink(); // Initialize communication between XBee + RPi
   initServos(); // Initialize servos
   initSensors(); // Initialize sensors
@@ -33,8 +33,9 @@ void setup() {
 
   delay(100);
 
-  sendTransmission(SERIAL_PORT_RPI, "01", 1);
-  sendTransmission(SERIAL_PORT_XBEE, "01", 1);
+  SERIAL_PORT_CONSOLE.println("Setup complete");
+  sendTransmission(PORT_RPI, "01", 1);
+  sendTransmission(PORT_XBEE, "01", 1);
 }
 
 void loop() {
@@ -43,7 +44,7 @@ void loop() {
   // Slow function = slow response/missed messages = crashed boat
   checkLink(); // Check if any transmissions have been recieved from the XBee + RPi
   checkSensors(); // Update the stored sensor states if new info is available
-  sensorTrans(); // Send sensor data to XBee + RPi if appropriate
+  sendSensors(); // Send sensor data to XBee + RPi if appropriate
   heartbeat(); // Send Mega "heartbeat" indicating mode and queries if RPi + XBee are connected
   checkRC(); // Update the winch and rudder position if RC is enabled
 }
@@ -53,8 +54,10 @@ void heartbeat() {
   unsigned long currentMillis = millis();
   //Send Mega "heartbeat" every 3 seconds
   if (currentMillis - lastHeartbeat > 3000) {
-    sendTransmission(SERIAL_PORT_XBEE, "00", String(mode));
-    sendTransmission(SERIAL_PORT_RPI, "00", String(mode));
+    Serial.println("Heartbeat");
+    sendTransmission(PORT_XBEE, "00", String(mode));
+    sendTransmission(PORT_RPI, "00", String(mode));
+    lastHeartbeat = millis();
   }
 
   // Send query transmissions every 5 seconds if the device has never responded or if it is disconnected/dead
@@ -67,14 +70,14 @@ void heartbeat() {
     // If the RPi has never responded or if it's last response was over 40 seconds ago (two query periods)
     // Send query transmissions every 5 seconds
     if (currentMillis - rpiLastQuery >= 5000) {
-      sendTransmission(SERIAL_PORT_RPI, "00", "?");
-      sendTransmission(SERIAL_PORT_XBEE, "09", 1); // Notify XBee that RPi is offline
+      sendTransmission(PORT_RPI, "00", "?");
+      sendTransmission(PORT_XBEE, "09", 1); // Notify XBee that RPi is offline
       setAutopilot(false); // Disable autopilot and enable RC if RPi fails
       rpiLastQuery = currentMillis;
     }
   } else if (currentMillis - rpiLastQuery >= 20000) {
     // If the RPi reponded 20 seconds ago, send another query transmission to check if it is still alive
-    sendTransmission(SERIAL_PORT_RPI, "00", "?");
+    sendTransmission(PORT_RPI, "00", "?");
     rpiLastQuery = currentMillis;
   }
 
@@ -84,12 +87,12 @@ void heartbeat() {
     // If the XBee has never responded or if it's last response was over 20 seconds ago (two query periods)
     // Send query transmissions every 5 seconds
     if (currentMillis - xbeeLastQuery >= 5000) {
-      sendTransmission(SERIAL_PORT_XBEE, "00", "?");
+      sendTransmission(PORT_XBEE, "00", "?");
       xbeeLastQuery = currentMillis;
     }
   } else if (currentMillis - xbeeLastResponse >= 10000) {
     // If the XBee reponded 10 seconds ago, send another query transmission to check if it is still alive
-    sendTransmission(SERIAL_PORT_XBEE, "00", "?");
+    sendTransmission(PORT_XBEE, "00", "?");
     xbeeLastQuery = currentMillis;
   }
 }

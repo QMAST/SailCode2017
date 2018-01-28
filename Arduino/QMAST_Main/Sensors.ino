@@ -5,11 +5,11 @@
   Created in January 2018, QMAST
 */
 // TODO: Calibrate wind vane
-// TODO: Calibrate RC
 // TODO: Implement GPS
 // TODO: Implement Pixy and LIDAR
 
 #include "pins.h"
+#define DEFAULT_SENSOR_TRANSMILLIS 3000 // Default interval the Mega transmits sensor data
 
 // Compass related code
 #include <Wire.h>
@@ -27,15 +27,16 @@ unsigned long lastSensorMillis;
 
 // Storage for sensor data and interval of data transmission
 String sensorCodes[] = {"GP", "CP", "TM", "WV", "PX", "LD"};
-String sensorStates[sizeof(sensorCodes)];
-int sensorTransIntervalXBee[sizeof(sensorCodes)];
-int sensorTransIntervalRPi[sizeof(sensorCodes)];
-unsigned long sensorLastTransXBee[sizeof(sensorCodes)];
-unsigned long sensorLastTransRPi[sizeof(sensorCodes)];
+#define NUMBER_OF_CODES 6
+String sensorStates[NUMBER_OF_CODES];
+int sensorTransIntervalXBee[NUMBER_OF_CODES];
+int sensorTransIntervalRPi[NUMBER_OF_CODES];
+unsigned long sensorLastTransXBee[NUMBER_OF_CODES];
+unsigned long sensorLastTransRPi[NUMBER_OF_CODES];
 
 void initSensors() {
   // Set default sensor transmission intervals and sensor states
-  for (int i = 0; i < sizeof(sensorCodes); i++) {
+  for (int i = 0; i < NUMBER_OF_CODES; i++) {
     sensorTransIntervalXBee[i] = DEFAULT_SENSOR_TRANSMILLIS;
     sensorTransIntervalRPi[i] = DEFAULT_SENSOR_TRANSMILLIS;
     sensorStates[i] = "";
@@ -67,6 +68,7 @@ void checkSensors() {
     angle16 <<= 8;
     angle16 += low_byte;
     setSensor("CP", String(angle16 / 10));
+    //Serial.println(angle16 / 10);
 
     // Update wind vane
     int angle = map(analogRead(APIN_WINDVANE), WINDVANE_LOW, WINDVANE_HIGH, 0, 360);
@@ -78,7 +80,7 @@ void checkSensors() {
 
 void setSensor(String code, String data) {
   // Used to update data stored for a sensor
-  for (int i = 0; i < sizeof(sensorCodes); i++) {
+  for (int i = 0; i < NUMBER_OF_CODES; i++) {
     // Cycle through all of the sensor codes to find the one needing updating
     if (code.equals(sensorCodes[i])) {
       // Update the sensor storage
@@ -91,7 +93,7 @@ void setSensor(String code, String data) {
 String getSensor(String code, String data) {
   // Takes the sensor code and matches it with the appropriate data store
   // Used to update data stored for a sensor
-  for (int i = 0; i < sizeof(sensorCodes); i++) {
+  for (int i = 0; i < NUMBER_OF_CODES; i++) {
     // Cycle through all of the sensor codes to find the one requested
     if (code.equals(sensorCodes[i])) {
       // Update the sensor storage
@@ -101,25 +103,28 @@ String getSensor(String code, String data) {
   return "";
 }
 
-void sensorTrans() {
+void sendSensors() {
   // Check if the transmission interval/delay has passed for each sensor for the XBee + RPi
   // If the interval has passed, send the updated data
   unsigned long currentMillis = millis();
-  for (int i = 0; i < sizeof(sensorCodes); i++) {
+  for (int i = 0; i < NUMBER_OF_CODES; i++) {
     if (abs(currentMillis - sensorLastTransXBee[i]) >= sensorTransIntervalXBee[i] && sensorTransIntervalXBee[i] != 0) {
-      sendTransmission(SERIAL_PORT_XBEE, sensorCodes[i], sensorStates[i]);
+      sendTransmission(PORT_XBEE, sensorCodes[i], sensorStates[i]);
       sensorLastTransXBee[i] = currentMillis;
     }
     if (abs(currentMillis - sensorLastTransRPi[i]) >= sensorTransIntervalRPi[i] && sensorTransIntervalRPi[i] != 0) {
-      sendTransmission(SERIAL_PORT_RPI, sensorCodes[i], sensorStates[i]);
+      sendTransmission(PORT_RPI, sensorCodes[i], sensorStates[i]);
       sensorLastTransRPi[i] = currentMillis;
+      /*SERIAL_PORT_CONSOLE.print(sensorCodes[i]);
+      SERIAL_PORT_CONSOLE.print(": ");
+      SERIAL_PORT_CONSOLE.println(sensorStates[i]);*/
     }
   }
 }
 
 void setSensorTransInterval(int port, String code, int interval) {
   // Called when the XBee/RPi requests to be updated with sensor data at a different frequency
-  for (int i = 0; i < sizeof(sensorCodes); i++) {
+  for (int i = 0; i < NUMBER_OF_CODES; i++) {
     // Cycle through all of the sensor codes to find the one needing updating
     if (code.equals(sensorCodes[i])) {
       // Update the sensor transmission interval for the device sending the request
