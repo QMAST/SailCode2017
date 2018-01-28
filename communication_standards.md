@@ -145,3 +145,9 @@ Received by | Action/Response
 ---|---
 Mega | Relay message from the RPi to the XBee.
 XBee | Update GUI.
+### Sx Series – Servo
+Can be sent by the RPi or XBee to the Mega to actuate the servos.
+#### SW - Winch
+`00XXX;` is used to move the winch where 0 is fully sheeted in and 100 is fully sheeted out. Do not pad number with zeros.
+#### SW - Rudder
+`00XXX;` is used to move the rudder between 0 to 180 degrees where 0 corresponds with fully turned clockwise, 180 fully turned counterclockwise and 90 being the "zero" rudder position. Do not pad number with zeros.
