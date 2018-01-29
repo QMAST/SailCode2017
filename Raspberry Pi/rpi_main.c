@@ -8,8 +8,10 @@
 #include <termios.h>    // POSIX terminal control definitions
 #include <sys/ioctl.h>
 
-#define SERIAL_PORT "/dev/ttyACM0"  // TODO: Pass in as command line option?
-#define BAUD_RATE B57600
+
+//#define SERIAL_PORT "/dev/ttyACM0"  // TODO: Pass in as command line option?
+#define SERIAL_PORT "/dev/ttyS0"// Serial port on RPi3. ttyACM0 has been mapped to Bluetooth on RPi3.
+#define BAUD_RATE B9600
 // TODO: Add global variables to be used in the sail logic
 
 int set_interface_attributes(int fd)
