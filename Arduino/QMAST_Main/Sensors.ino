@@ -142,9 +142,9 @@ void sendSensors() {
       sendTransmission(PORT_RPI, sensorCodes[i], sensorStates[i]);
       sensorLastTransRPi[i] = currentMillis;
       DEBUG_PRINT(sensorCodes[i]);
-      DEBUG_PRINT(": ");
+      DEBUG_PRINT(F(": "));
       DEBUG_PRINT(sensorStates[i]);
-      DEBUG_PRINT(" ");
+      DEBUG_PRINT(F(" "));
     }
   }
   DEBUG_PRINTLN("");

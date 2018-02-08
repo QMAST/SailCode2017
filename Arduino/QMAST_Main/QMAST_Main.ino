@@ -24,7 +24,7 @@ void setup() {
   SERIAL_PORT_XBEE.begin(SERIAL_BAUD_XBEE);
   SERIAL_PORT_RPI.begin(SERIAL_BAUD_RPI);
 
-  DEBUG_PRINTLN("Powered on");
+  DEBUG_PRINTLN(F("Powered on"));
 
   initLink(); // Initialize communication between XBee + RPi
   initServos(); // Initialize servos
@@ -33,7 +33,7 @@ void setup() {
 
   delay(100);
 
-  DEBUG_PRINTLN("Setup complete");
+  DEBUG_PRINTLN(F("Setup complete"));
   sendTransmission(PORT_RPI, "01", 1);
   sendTransmission(PORT_XBEE, "01", 1);
 }
@@ -54,7 +54,7 @@ void heartbeat() {
   unsigned long currentMillis = millis();
   //Send Mega "heartbeat" every 3 seconds
   if (currentMillis - lastHeartbeat > 3000) {
-    DEBUG_PRINTLN("Heartbeat");
+    DEBUG_PRINTLN(F("Heartbeat"));
     sendTransmission(PORT_XBEE, "00", String(mode));
     sendTransmission(PORT_RPI, "00", String(mode));
     lastHeartbeat = millis();

@@ -90,7 +90,7 @@ void checkLink() {
     xbeeInputBuffer += inChar;
     // if the incoming character is a ";" do something about it:
     if (inChar == ';') {
-      DEBUG_PRINT("Recieved (Xbee): ");
+      DEBUG_PRINT(F("Recieved (Xbee): "));
       DEBUG_PRINTLN(xbeeInputBuffer);
       String code = xbeeInputBuffer.substring(0, 2);
       String data = xbeeInputBuffer.substring(2, xbeeInputBuffer.indexOf(";"));
@@ -105,7 +105,7 @@ void checkLink() {
     rpiInputBuffer += inChar;
     // if the incoming character is a ";" do something about it:
     if (inChar == ';') {
-      DEBUG_PRINTLN("Recieved (RPi): ");
+      DEBUG_PRINTLN(F("Recieved (RPi): "));
       DEBUG_PRINTLN(rpiInputBuffer);
       String code = rpiInputBuffer.substring(0, 2);
       String data = rpiInputBuffer.substring(2, rpiInputBuffer.indexOf(";"));
