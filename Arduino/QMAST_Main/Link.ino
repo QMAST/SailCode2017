@@ -90,7 +90,8 @@ void checkLink() {
     xbeeInputBuffer += inChar;
     // if the incoming character is a ";" do something about it:
     if (inChar == ';') {
-      Serial.println(xbeeInputBuffer);
+      DEBUG_PRINT("Recieved (Xbee): ");
+      DEBUG_PRINTLN(xbeeInputBuffer);
       String code = xbeeInputBuffer.substring(0, 2);
       String data = xbeeInputBuffer.substring(2, xbeeInputBuffer.indexOf(";"));
       executeXBeeTransmission(code, data);
@@ -104,7 +105,8 @@ void checkLink() {
     rpiInputBuffer += inChar;
     // if the incoming character is a ";" do something about it:
     if (inChar == ';') {
-      Serial.println(rpiInputBuffer);
+      DEBUG_PRINTLN("Recieved (RPi): ");
+      DEBUG_PRINTLN(rpiInputBuffer);
       String code = rpiInputBuffer.substring(0, 2);
       String data = rpiInputBuffer.substring(2, rpiInputBuffer.indexOf(";"));
       executeRPiTransmission(code, data);

@@ -1,3 +1,20 @@
+/*
+  pins.h
+  Header file mapping to the 2017-2018 boat
+
+  Created in December 2017, QMAST
+*/
+
+#define DEBUG // Comment this line out to disable debug printing to USB serial
+
+#ifdef DEBUG
+ #define DEBUG_PRINTLN(x)  SERIAL_PORT_CONSOLE.println (x)
+ #define DEBUG_PRINT(x)  SERIAL_PORT_CONSOLE.print (x)
+#else
+ #define DEBUG_PRINTLN(x)
+ #define DEBUG_PRINT(x)
+#endif
+
 #ifndef _PINS_H
 #define _PINS_H
 

@@ -4,14 +4,19 @@
 
   Created in January 2018, QMAST
 */
-// TODO: Calibrate wind vane
-// TODO: Implement GPS
+// TODO: Test GPS output format
 // TODO: Implement Pixy and LIDAR
 
 #include "pins.h"
 #define DEFAULT_SENSOR_TRANSMILLIS 3000 // Default interval the Mega transmits sensor data
 
-// Compass related code
+// GPS definitions
+#include <Adafruit_GPS.h>
+Adafruit_GPS GPS(&SERIAL_PORT_GPS);
+// Turns off echoing of GPS to Serial1
+#define GPSECHO false
+
+// Compass definitions
 #include <Wire.h>
 #define CMPS11_ADDRESS 0x60  // Address of CMPS11 shifted right one bit for arduino wire library
 #define ANGLE_8  1           // Register to read 8bit angle from
@@ -23,7 +28,7 @@ unsigned int angle16;
 #define WINDVANE_LOW 0
 #define WINDVANE_HIGH 1023
 
-unsigned long lastSensorMillis;
+unsigned long lastSensorMillis; // Last time sensor data was parsed
 
 // Storage for sensor data and interval of data transmission
 String sensorCodes[] = {"GP", "CP", "TM", "WV", "PX", "LD"};
@@ -42,11 +47,17 @@ void initSensors() {
     sensorStates[i] = "";
   }
 
+  //Initialize Compass
   Wire.begin(); // Initiate the Wire library
 
+  // Initialize GPS
+  GPS.begin(9600);
+  // Turn on RMC (recommended minimum) and GGA (fix data) including altitude
+  GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
+  GPS.sendCommand(PMTK_SET_NMEA_UPDATE_1HZ); // 1 Hz update rate, don't go above 1Hz to prevent overload
 }
 
-void checkSensors() {
+void checkSensors() {  
   // Update sensor states if new information has arrived
   // Only runs once every 40 milliseconds, or about 25 times a second
   if (millis() - lastSensorMillis >= 20 && rcEnabled) {
@@ -68,14 +79,29 @@ void checkSensors() {
     angle16 <<= 8;
     angle16 += low_byte;
     setSensor("CP", String(angle16 / 10));
-    //Serial.println(angle16 / 10);
 
+   // Update GPS
+   if (GPS.fix) {
+      String location = "";
+      if(GPS.lat == 'S') location = "-";
+      location = location + String(GPS.latitude,4) + ",";
+      if(GPS.lon == 'E') location = location + "-";
+      location = location + String(GPS.longitude,4) + ",";
+      setSensor("GP", location);
+    }else{
+      setSensor("GP", "0");
+    }
+  
     // Update wind vane
     int angle = map(analogRead(APIN_WINDVANE), WINDVANE_LOW, WINDVANE_HIGH, 0, 360);
     setSensor("WV", String(angle));
 
     lastSensorMillis = millis();
   }
+
+  // GPS data is can come in at any time (~1Hz) so keep looking for it to prevent dropping a message
+  GPS.read();
+  if (GPS.newNMEAreceived()) GPS.parse(GPS.lastNMEA());
 }
 
 void setSensor(String code, String data) {
@@ -115,11 +141,13 @@ void sendSensors() {
     if (abs(currentMillis - sensorLastTransRPi[i]) >= sensorTransIntervalRPi[i] && sensorTransIntervalRPi[i] != 0) {
       sendTransmission(PORT_RPI, sensorCodes[i], sensorStates[i]);
       sensorLastTransRPi[i] = currentMillis;
-      /*SERIAL_PORT_CONSOLE.print(sensorCodes[i]);
-      SERIAL_PORT_CONSOLE.print(": ");
-      SERIAL_PORT_CONSOLE.println(sensorStates[i]);*/
+      DEBUG_PRINT(sensorCodes[i]);
+      DEBUG_PRINT(": ");
+      DEBUG_PRINT(sensorStates[i]);
+      DEBUG_PRINT(" ");
     }
   }
+  DEBUG_PRINTLN("");
 }
 
 void setSensorTransInterval(int port, String code, int interval) {

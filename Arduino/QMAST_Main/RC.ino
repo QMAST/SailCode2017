@@ -32,35 +32,31 @@ void setRCEnabled(bool state) {
   rcEnabled = state;
 }
 
-void updateRCWinch() {
-  int winchPos = pulseIn(CHANNEL_WINCH, HIGH, 1000);
-  if (winchPos == 0) {
-    //Serial.println("RC OFF");
-  } else {
-    winchPos = constrain(winchPos, WINCH_PULSE_LOW, WINCH_PULSE_HIGH); //Trim bottom and upper end
-    moveWinch(winchPos);
-  }
+void updateRCWinch(int winchPos) {
+  winchPos = constrain(winchPos, WINCH_PULSE_LOW, WINCH_PULSE_HIGH); //Trim bottom and upper end
+  moveWinch(winchPos);
 }
 
-void updateRCRudders() {
-  int rudderPos = pulseIn(CHANNEL_RUDDERS, HIGH, 1000);
-  if (rudderPos == 0) {
-    //Serial.println("RC OFF");
-  } else {
-    rudderPos = constrain(rudderPos, RUDDER_PULSE_LOW, RUDDER_PULSE_HIGH); //Trim bottom and upper end
-    const int RudderMiddle = 0.5 * RUDDER_PULSE_HIGH + 0.5 * RUDDER_PULSE_LOW;
-    if (rudderPos <= (RudderMiddle + RUDDER_DEAD_WIDTH / 2) && rudderPos >= (RudderMiddle - RUDDER_DEAD_WIDTH / 2)) { //Create Dead-Band
-      rudderPos = RudderMiddle; // calculate the middle
-    }
-    moveRudder(rudderPos);
+void updateRCRudders(int rudderPos) {
+  rudderPos = constrain(rudderPos, RUDDER_PULSE_LOW, RUDDER_PULSE_HIGH); //Trim bottom and upper end
+  const int RudderMiddle = 0.5 * RUDDER_PULSE_HIGH + 0.5 * RUDDER_PULSE_LOW;
+  if (rudderPos <= (RudderMiddle + RUDDER_DEAD_WIDTH / 2) && rudderPos >= (RudderMiddle - RUDDER_DEAD_WIDTH / 2)) { //Create Dead-Band
+    rudderPos = RudderMiddle; // calculate the middle
   }
+  moveRudder(rudderPos);
 }
 
 void checkRC() {
   // Wrapper function to improve code readability in the main loop and also rate limit RC updating
   if (millis() - lastRCMillis >= MIN_RC_DELAY && rcEnabled) {
-    updateRCRudders();
-    updateRCWinch();
+    int winchPos = pulseIn(CHANNEL_WINCH, HIGH, 1000);
+    DEBUG_PRINT("Recieved ");
+    DEBUG_PRINT(winchPos);
+    DEBUG_PRINTLN(" (winch)");
+    int rudderPos = pulseIn(CHANNEL_RUDDERS, HIGH, 1000);
+    if (winchPos == 0 || rudderPos == 0) DEBUG_PRINTLN("RC Offline");
+    if (rudderPos != 0) updateRCRudders(rudderPos);
+    if (winchPos != 0)updateRCWinch(winchPos);
     lastRCMillis = millis();
   }
 }
