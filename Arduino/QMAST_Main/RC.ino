@@ -49,10 +49,10 @@ void updateRCRudders(int rudderPos) {
 void checkRC() {
   // Wrapper function to improve code readability in the main loop and also rate limit RC updating
   if (millis() - lastRCMillis >= MIN_RC_DELAY && rcEnabled) {
-    int winchPos = pulseIn(CHANNEL_WINCH, HIGH, 1000);
+    int winchPos = pulseIn(CHANNEL_WINCH, HIGH, RC_STD_TIMEOUT);
     DEBUG_PRINT(F("Recieved (Winch): "));
     DEBUG_PRINTLN(winchPos);
-    int rudderPos = pulseIn(CHANNEL_RUDDERS, HIGH, 1000);
+    int rudderPos = pulseIn(CHANNEL_RUDDERS, HIGH, RC_STD_TIMEOUT);
     if (winchPos == 0 || rudderPos == 0) DEBUG_PRINTLN(F("RC Offline"));
     if (rudderPos != 0) updateRCRudders(rudderPos);
     if (winchPos != 0)updateRCWinch(winchPos);

@@ -5,6 +5,7 @@
   Created in December 2017, QMAST
 */
 
+
 #define DEBUG // Comment this line out to disable debug printing to USB serial
 
 #ifdef DEBUG
@@ -38,6 +39,7 @@
 #define PORT_XBEE                   2
 
 // Remote control (Spektrum)
+#define RC_STD_TIMEOUT 50000 //RC Pulse standard timeout, recommend at least 20000
 #define PIN_RC_CH1                  22
 #define PIN_RC_CH2                  23
 #define PIN_RC_CH3                  24

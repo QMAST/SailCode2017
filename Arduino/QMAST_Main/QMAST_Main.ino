@@ -62,7 +62,7 @@ void heartbeat() {
 
   // Send query transmissions every 5 seconds if the device has never responded or if it is disconnected/dead
   // Otherwise, send a query transmission one query period from the last response time to check if the device is still alive
-  // If either device does not repond within 2 query periods, it is disconnected/dead
+  // If either device does not respond within 2 query periods, it is disconnected/dead
 
   // Check if the RPi is connected/alive
   // One query period for the RPi is 20 seconds
@@ -76,7 +76,7 @@ void heartbeat() {
       rpiLastQuery = currentMillis;
     }
   } else if (currentMillis - rpiLastQuery >= 20000) {
-    // If the RPi reponded 20 seconds ago, send another query transmission to check if it is still alive
+    // If the RPi responded 20 seconds ago, send another query transmission to check if it is still alive
     sendTransmission(PORT_RPI, "00", "?");
     rpiLastQuery = currentMillis;
   }
@@ -91,7 +91,7 @@ void heartbeat() {
       xbeeLastQuery = currentMillis;
     }
   } else if (currentMillis - xbeeLastResponse >= 10000) {
-    // If the XBee reponded 10 seconds ago, send another query transmission to check if it is still alive
+    // If the XBee responded 10 seconds ago, send another query transmission to check if it is still alive
     sendTransmission(PORT_XBEE, "00", "?");
     xbeeLastQuery = currentMillis;
   }
