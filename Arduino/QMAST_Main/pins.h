@@ -39,7 +39,6 @@
 #define PORT_XBEE                   2
 
 // Remote control (Spektrum)
-#define RC_STD_TIMEOUT 50000 //RC Pulse standard timeout, recommend at least 20000
 #define PIN_RC_CH1                  22
 #define PIN_RC_CH2                  23
 #define PIN_RC_CH3                  24
@@ -48,6 +47,19 @@
 #define PIN_RC_CH6                  27
 #define PIN_RC_CH7                  28
 #define PIN_RC_CH8                  29
+
+#define RC_STD_TIMEOUT 50000 // Time (micros) to wait for pulses to begin from the RC receiver, recommend at least 20000
+#define RC_MIN_DELAY 50 // Minimum time (millis) between checking RC input
+#define RC_SMOOTHING_CONS 800 //Time (millis) over which to perform exponential smoothing (tau value)
+
+#define CHANNEL_RUDDERS PIN_RC_CH2 // Adjust this so the left/right motion of the right stick corresponds with rudder movement
+#define RUDDER_PULSE_LOW 1093
+#define RUDDER_PULSE_HIGH 1890
+#define RUDDER_DEAD_WIDTH 30
+
+#define CHANNEL_WINCH PIN_RC_CH1 // Adjust this so that the up/down motion of the left stick corresponds with the winch channel
+#define WINCH_PULSE_LOW 1093
+#define WINCH_PULSE_HIGH 1890
 
 // Servo connections
 #define PIN_SERVO_1                 8

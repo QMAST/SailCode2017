@@ -23,6 +23,8 @@ void moveRudder(int pos){
 
 void moveWinch(int pos){
   // Move the winch between 0-180 (fully in vs fully out)
+  //Serial.print("Moving Winch to ");
+  //Serial.println(pos);
   servoWinch.write(pos);
 }
 

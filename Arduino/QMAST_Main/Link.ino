@@ -7,6 +7,7 @@
 */
 // TODO: Use char* for serial input and comparison with codes saved in PROGMEM to save RAM
 // TODO: Implement 02 - Blink LED Strip
+// TODO: Implement servo movement codes
 
 #include "pins.h"
 String xbeeInputBuffer = "";         // a string to hold incoming data
