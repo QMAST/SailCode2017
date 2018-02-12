@@ -80,6 +80,10 @@ void executeCommonTransmission(int port, String code, String data) {
     } else if (data.toInt() == 0) {
       setRCEnabled(false);
     }
+  }else if(code.equals("SR")){
+    moveRudder(data.toInt());
+  }else if(code.equals("SW")){
+    moveWinch(data.toInt());
   }
 }
 
@@ -106,7 +110,7 @@ void checkLink() {
     rpiInputBuffer += inChar;
     // if the incoming character is a ";" do something about it:
     if (inChar == ';') {
-      DEBUG_PRINTLN(F("Recieved (RPi): "));
+      DEBUG_PRINT(F("Recieved (RPi): "));
       DEBUG_PRINTLN(rpiInputBuffer);
       String code = rpiInputBuffer.substring(0, 2);
       String data = rpiInputBuffer.substring(2, rpiInputBuffer.indexOf(";"));
