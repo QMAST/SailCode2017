@@ -13,6 +13,8 @@ The Mega TX1/RX1 are connected to the XBee over serial TTL at 115200 baud.
 Example: `XXMESSAGE;`
 The devices share a common communication format for simplicity. Each message consists of a string terminated by a **semicolon**. Do not use line break characters or message contents may be invalidated. 
 The first two characters of the string represent the subject of the message. A full list of subjects and their corresponding meanings/sensor can be found below, along with the expected response. The remainder of the string up to the semicolon is the message block. 
+The message portion cannot start with `?` unless the transmission is changing sensor update frequency
+Any transmissions that are corrupted or malformed are ignored. Currently, there is no way to confirm receipt and proper execution of a command (outside of querying), which may be a problem with remote, XBee based transmissions. Error correction and reporting may be added in the future. 
 ## Subjects and Messages
 The following section describes the meaning of different message subjects and how the device should respond if it receives that kind of string. Where XBee is indicated, it is assumed that a land-based control device will receive and respond as expected.
 ### Sensors
@@ -32,7 +34,7 @@ The Mega will send PX0 if no object is detected. The Mega will send `PXX;` with 
 ### 0x Series – Diagnostics and Basic Features
 #### 00 - Device Online/Mode
 `00?;` is used to check if the RPi/Xbee is online. Once received, the device should respond with `001;`. 
-The Mega sends `00X;` with X indicating the device state (0 = Error/Disabled, 1 = Remote Control (Default), 2 = Autopiloted by RPi). By default the Mega will send `00X;` to the RPi and XBee every 3 seconds while on and send `00?;` every 5 seconds to check RPi/Xbee response.
+The Mega sends `00X;` with X indicating the device state (0 = Error/Disabled, 1 = Remote Control (Default), 2 = Autopiloted by RPi). By default the Mega will send `00X;` to the RPi and XBee every 3 seconds while on. The Mega will send `00?;` to check RPi/Xbee response every 5 seconds initially and if the device misses a response. Once the connection is initially established, the Mega will send `00?;` every 20 seconds to verify that the device is still alive.
 
 Received by | Action/Response 
 ---|---
@@ -40,7 +42,7 @@ Mega | Saves the last response time of the RPi/XBee. If RPi does not respond in 
 RPi | Responds to the Mega's `00?;` with `001;`
 XBee | Responds to the Mega's `00?;` with `001;`
 #### 01 - Device Powered On
-`011;` is sent by the Mega to the RPi/XBee as it is powering on. `011;` is sent by the RPi to the Mega as it is powering on. 
+`011;` is sent by the Mega to the RPi/XBee as it is powering on. 
 
 Received by | Action/Response 
 ---|---

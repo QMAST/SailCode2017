@@ -45,3 +45,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+Arduino/QMAST_Main/.vscode/c_cpp_properties.json
+Arduino/.vscode/arduino.json
+Arduino/.vscode/c_cpp_properties.json
+Arduino/QMAST_Main/.vscode/arduino.json
+
+# Temp build directory
+Arduino/QMAST_Main/build/
+Arduino/build/
