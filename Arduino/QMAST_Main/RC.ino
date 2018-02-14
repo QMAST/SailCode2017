@@ -26,14 +26,14 @@ void setRCEnabled(bool state) {
 
 void updateRCWinch() {
   int winchPos = pulseIn(CHANNEL_WINCH, HIGH, RC_STD_TIMEOUT); // Get winch pulse value
-  if (winchPos != 0) {
+  if (winchPos > 1000) {
     winchPos = smooth(winchPos, oldWinchPos, (millis() - lastRCMillis)); // Perform exponential smoothing to reduce twitching
+    oldWinchPos = winchPos; // Save current winch position for future exponential smoothing
     winchPos = constrain(winchPos, WINCH_PULSE_LOW, WINCH_PULSE_HIGH); //Trim bottom and upper end
     winchPos = map(winchPos,WINCH_PULSE_HIGH,WINCH_PULSE_LOW,180,0); // Map the winch pulse value to a number between 0-180 for the servo library
     moveWinch(winchPos); // Move the winch
-    oldWinchPos = winchPos; // Save current winch position for future exponential smoothing
   }else{
-    DEBUG_PRINTLN(F("RC Offline. No winch data."));
+    DEBUG_PRINTLN("RC Offline. No winch data.");
   }
 }
 

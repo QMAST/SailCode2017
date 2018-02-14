@@ -72,8 +72,10 @@ void heartbeat() {
     if (currentMillis - rpiLastQuery >= 5000) {
       sendTransmission(PORT_RPI, "00", "?");
       sendTransmission(PORT_XBEE, "09", 1); // Notify XBee that RPi is offline
-      setAutopilot(false); // Disable autopilot and enable RC if RPi fails
       rpiLastQuery = currentMillis;
+    }
+    if(rpiLastResponse != 0 && currentMillis - rpiLastResponse >= 40000){
+        setAutopilot(false); // Disable autopilot and enable RC if RPi fails
     }
   } else if (currentMillis - rpiLastQuery >= 20000) {
     // If the RPi responded 20 seconds ago, send another query transmission to check if it is still alive
