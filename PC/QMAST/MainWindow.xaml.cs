@@ -25,6 +25,7 @@ namespace QMAST
     {
         SerialPort myPort;
         private StringBuilder xbeeInputBuffer = new StringBuilder();
+        private StringBuilder consoleOutputBuffer = new StringBuilder();
 
         Brush brushItemError = new SolidColorBrush(Color.FromArgb(204, 183, 28, 28));
         Brush brushItem = new SolidColorBrush(Color.FromArgb(127, 0, 0, 0));
@@ -32,19 +33,27 @@ namespace QMAST
         int lastRudder = -2;
         int lastWinch = -2;
 
+        int currentState = 0;
+
         System.Windows.Threading.DispatcherTimer boatHeartbeatTimer = null;
 
+        System.Windows.Threading.DispatcherTimer portTimer = null;
+        string[] detectedPorts;
+        int nextPortIndex;
+        bool portScanning = false;
+
+        bool consOutputEnabled = false;
 
         public MainWindow()
         {
             InitializeComponent();
-            selectPort();
+            
+            portTimer = new System.Windows.Threading.DispatcherTimer();
+            portTimer.Tick += new EventHandler(portTimer_Tick);
+            portTimer.Interval = TimeSpan.FromMilliseconds(1500);
+            portTimer.Start();
 
-            System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
-            dispatcherTimer.Tick += new EventHandler(portTimer_Tick);
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 3);
-            dispatcherTimer.Start();
-
+            portTimer_Tick(null, null);
 
             boatHeartbeatTimer = new System.Windows.Threading.DispatcherTimer();
             boatHeartbeatTimer.Interval = TimeSpan.FromMilliseconds(6000);
@@ -53,15 +62,35 @@ namespace QMAST
 
         private void portTimer_Tick(object sender, EventArgs e)
         {
-            //do this every five seconds....
-            if (myPort != null && myPort.IsOpen)
+            if ((myPort != null && myPort.IsOpen) && !portScanning)
             {
 
             }
             else
             {
-                setState(0);
-                selectPort();
+                portTimer.Interval = TimeSpan.FromMilliseconds(1250); // Speed up the interval as much as possible, without missing the response from an XBee
+                Dispatcher.Invoke((Action)delegate ()
+                {
+                    setState(0); // Set the state to reflect no XBee connected
+                });
+                portScanning = true;
+
+                if (detectedPorts == null || detectedPorts.Length == 0 || nextPortIndex >= detectedPorts.Length)
+                {
+                    // Get a list of serial port names.
+                    detectedPorts = SerialPort.GetPortNames();
+                    if (detectedPorts.Length != 0)
+                    {
+                        // If the system has serial devices connected, try to connect to them
+                        nextPortIndex = 0;
+                        checkPortsForXBee();
+                    }
+                }
+                else
+                {
+                    // The polled serial device did not respond in time, try another device
+                    checkPortsForXBee();
+                }
             }
         }
 
@@ -73,84 +102,55 @@ namespace QMAST
             });
         }
 
-
-        private void selectPort()
+        private void checkPortsForXBee()
         {
-            // Get a list of serial port names.
-            string[] ports = SerialPort.GetPortNames();
-
-            if (ports.Length == 1)
+            bool portSelected = false;
+            while (portSelected == false)
             {
-                // If there is only one serial port, try connecting to it
-                if (myPort != null && myPort.IsOpen) myPort.Close();
-                try
+                if (detectedPorts == null || detectedPorts.Length == 0 || nextPortIndex >= detectedPorts.Length)
                 {
-                    myPort = new SerialPort(ports[0], 115200);
-                    myPort.Open();
-                    consPrintln("\n\nConnected to " + ports[0]);
-                    setState(1);
-                    myPort.DataReceived += new SerialDataReceivedEventHandler(myPort_DataReceived);
+                    // All ports have been cycled through. 
+                    // The next portResponseTimer_Tick will refresh detectedPorts 
+                    portSelected = true;
+                    detectedPorts = null;
                 }
-                catch (System.IO.IOException e)
+                else
                 {
-                    consPrintln(ports[0] + "is in an invalid state.");
-                }
-                catch (System.UnauthorizedAccessException)
-                {
-                    consPrintln(ports[0] + " is busy. Access is denied.");
-                }
-                catch (System.InvalidOperationException)
-                {
-                    consPrintln(ports[0] + " already open!");
-                }
-            }
-            else if (ports.Length > 0)
-            {
-                consPrintln("The following serial ports were found:");
+                    // Try connecting to the next available serial port
+                    if (myPort != null && myPort.IsOpen) myPort.Close();
 
-                // Display each port name to the console.
-                foreach (string port in ports)
-                {
-                    consPrintln(port);
-                }
+                    try
+                    {
+                        //consPrintln("Trying port " + detectedPorts[nextPortIndex]);
+                        myPort = new SerialPort(detectedPorts[nextPortIndex], 57600);
+                        myPort.Open();
+                        myPort.DataReceived += new SerialDataReceivedEventHandler(myPort_DataReceived);
+                        myPort.Write("+++");
+                        portSelected = true;
+                    }
+                    catch (System.IO.IOException)
+                    {
+                        //consPrintln(detectedPorts[nextPortIndex] + "is in an invalid state.");
+                    }
+                    catch (System.UnauthorizedAccessException)
+                    {
+                        //consPrintln(detectedPorts[nextPortIndex] + " is busy. Access is denied.");
+                    }
+                    catch (System.InvalidOperationException)
+                    {
+                        //consPrintln(detectedPorts[nextPortIndex] + " already open!");
+                    }
 
-                consPrintln("End Search");
-            }
-            else
-            {
-                consPrintln("XBee not found");
+                    nextPortIndex++;
+                }
             }
         }
 
         private void setState(int state)
         {
-            if(boatHeartbeatTimer!= null) boatHeartbeatTimer.Stop();
-            if (state == 0)
-            {
-                // XBee disconnected
-                lSubTitle.Content = "XBee Disconnected";
-                iState.Source = new BitmapImage(new Uri(@"/alert-circle.png", UriKind.Relative));
-                gState.Background = new SolidColorBrush(Color.FromRgb(183, 28, 28));
-            }
-            else if (state == 1)
-            {
-                // Boat offline, XBee connected
-                lSubTitle.Content = "XBee Connected";
-                iState.Source = new BitmapImage(new Uri(@"/lan-pending.png", UriKind.Relative));
-                gState.Background = new SolidColorBrush(Color.FromRgb(230, 81, 0));
-            }
-            else
-            {
-                // Boat online
-                lTitle.Content = "Boat Online";
-                lSubTitle.Content = "XBee Connected";
-                iState.Source = new BitmapImage(new Uri(@"/lan-connect.png", UriKind.Relative));
-                gState.Background = new SolidColorBrush(Color.FromRgb(1, 87, 155));
-                sServOverride.IsEnabled = true;
-                boatHeartbeatTimer.Start(); // Start boat offline countdown
-            }
+            if (boatHeartbeatTimer != null) boatHeartbeatTimer.Stop();
 
-            if (state == 0 || state == 1)
+            if ((state == 0 || state == 1) && (currentState < 2))
             {
                 lTitle.Content = "Boat Offline";
                 sServOverride.IsChecked = false;
@@ -161,42 +161,93 @@ namespace QMAST
                 gWind.Background = brushItemError;
                 gGPS.Background = brushItemError;
             }
+
+            if (state == 0 && currentState != 0)
+            {
+                // XBee disconnected
+                lSubTitle.Content = "XBee Disconnected";
+                iState.Source = new BitmapImage(new Uri(@"/alert-circle.png", UriKind.Relative));
+                gState.Background = new SolidColorBrush(Color.FromRgb(183, 28, 28));
+                currentState = 0;
+                tbConsInput.IsEnabled = false;
+                bConsSend.IsEnabled = false;
+                sCons.IsEnabled = false;
+                sCons.IsChecked = false;
+            }
+            else if (state == 1 && currentState != 1)
+            {
+                // Boat offline, XBee connected
+                lSubTitle.Content = "XBee Connected";
+                iState.Source = new BitmapImage(new Uri(@"/lan-pending.png", UriKind.Relative));
+                gState.Background = new SolidColorBrush(Color.FromRgb(230, 81, 0));
+                currentState = 1;
+                tbConsInput.IsEnabled = true;
+                bConsSend.IsEnabled = true;
+                sCons.IsEnabled = true;
+            }
+            else if (state == 2 && currentState != 2)
+            {
+                // Boat online
+                lTitle.Content = "Boat Online";
+                iState.Source = new BitmapImage(new Uri(@"/lan-connect.png", UriKind.Relative));
+                gState.Background = new SolidColorBrush(Color.FromRgb(1, 87, 155));
+                sServOverride.IsEnabled = true;
+                boatHeartbeatTimer.Start(); // Start boat offline countdown
+                currentState = 2;
+            }
         }
 
         private void myPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            // Each time data is recieved on the port, save it to a buffer
-            xbeeInputBuffer.Append(myPort.ReadExisting());
-            if (xbeeInputBuffer.ToString().Contains(";"))
+            // Each time data is recieved on the port, save it to a buffer.
+            // If that buffer contains a ";", parse/execute the completed message
+            if (myPort.IsOpen) // First check that the port state has not changed in the meantime
             {
-                // Execute the completed command if an entire string has been recieved
-                StringBuilder command = new StringBuilder();
-                foreach (char c in xbeeInputBuffer.ToString())
+                string newContent = myPort.ReadExisting(); // Read in the incoming data
+                xbeeInputBuffer.Append(newContent); // Save the incoming data into the buffer
+                if (newContent.Contains(';')) // Check if the incomming buffer contains a semicolon indicating a complete command
                 {
-                    // Build the command character by character until a semicolon is reached
-                    // this loop is required as more than one message may be recieved at once/partial messages, etc.
-
-                    if (c == ';')
+                    // Execute the completed command if an entire string has been recieved
+                    int searchIndex = 0;
+                    string bufferString = xbeeInputBuffer.ToString();
+                    int occuranceIndex = bufferString.IndexOf(';');
+                    while (occuranceIndex != -1 && searchIndex < bufferString.Length)
                     {
-                        // Parse the message
-                        try
+                        int substringLength = occuranceIndex - searchIndex;
+                        if (substringLength != 1)
                         {
-                            string code = command.ToString().Substring(0, 2);
-                            string data = command.ToString().Substring(2);
-                            // Execute the completed message on the UI thread
-                            Dispatcher.Invoke((Action)delegate ()
+                            string command = bufferString.Substring(searchIndex, substringLength); // string to hold the completed command
+                            try // Parse the message
                             {
-                                consPrintln("Code: " + code + ", data: " + data);
-                                executeTransmission(code, data);
-                            });
+                                string code = command.Substring(0, 2);
+                                string data = command.Substring(2);
+                                consPrintln(code + ": " + data);
+                                // Execute the completed message on the UI thread
+                                Dispatcher.Invoke((Action)delegate ()
+                                {
+                                    executeTransmission(code, data);
+                                });
+                            }
+                            catch (System.ArgumentOutOfRangeException) { } // Problem taking the substring, may be an empty/malformed message
                         }
-                        catch (System.ArgumentOutOfRangeException) { }
-                        command.Clear(); // Clear the command buffer
+                        searchIndex = occuranceIndex + 1;
+                        occuranceIndex = bufferString.IndexOf(';', searchIndex);
                     }
-                    else command.Append(c);
+
+                    xbeeInputBuffer.Clear(); // Clear the input buffer
+                    xbeeInputBuffer.Append(bufferString.Substring(searchIndex)); // If there are any leftever characters, save them back to the input buffer
                 }
-                xbeeInputBuffer.Clear(); // Clear the input buffer
-                xbeeInputBuffer.Append(command.ToString()); // If there are any leftever characters, save them back to the input buffer
+                else if (xbeeInputBuffer.ToString().Contains("OK") && portScanning == true)
+                {
+                    // An XBee has responded, indicating that the correct port has been found
+                    portScanning = false; // Stop scanning for ports in the timer
+                    portTimer.Interval = TimeSpan.FromMilliseconds(3000); // Increase the timer to 3 seconds to reduce background computations.
+                    // It's not necessary to respond to XBee unplugged messages "that quickly"
+                    myPort.WriteLine("ATCN"); // Take the XBee out of command mode
+                    //consPrintln("\n\n--- Connected to XBee ---\n");
+                    Dispatcher.Invoke((Action)delegate () { setState(1); }); // Update the GUI to show that an XBee is present
+                    xbeeInputBuffer.Clear(); // Clear the input buffer (may lose some applicable text but oh well)
+                }
             }
         }
 
@@ -230,7 +281,7 @@ namespace QMAST
                 }
                 else if (data.Equals("?"))
                 {
-
+                    sendTransmission("00", "1");
                 }
             }
             else if (code.Equals("09"))
@@ -282,32 +333,48 @@ namespace QMAST
 
         private void sendTransmission(string code, string message)
         {
-            if(myPort != null && myPort.IsOpen)
+            if (myPort != null && myPort.IsOpen)
             {
                 myPort.Write(code + message + ";");
-
-                if (code.Equals("03"))
+                if (currentState == 2)
                 {
-                    // If the message is about overriding the remote control
-                    // Also update the GUI accordingly
-                    // This helps ensure that the GUI only updates if the command has been sent
-                    // Or if the command was send through the console
-                    if (message.Equals("1"))
+                    if (code.Equals("03"))
                     {
-                        sServOverride.IsChecked = false;
-                        grServos.Visibility = Visibility.Collapsed;
-                        sWinch.IsEnabled = false;
-                        sRudder.IsEnabled = false;
-                    }
-                    else
-                    {
-                        sServOverride.IsChecked = true;
-                        grServos.Visibility = Visibility.Visible;
-                        sWinch.IsEnabled = true;
-                        sRudder.IsEnabled = true;
+                        // If the message is about overriding the remote control
+                        // Also update the GUI accordingly
+                        // This helps ensure that the GUI only updates if the command has been sent
+                        // Or if the command was send through the console
+                        if (message.Equals("1"))
+                        {
+                            sServOverride.IsChecked = false;
+                            grServos.Visibility = Visibility.Collapsed;
+                            sWinch.IsEnabled = false;
+                            sRudder.IsEnabled = false;
+                        }
+                        else
+                        {
+                            sServOverride.IsChecked = true;
+                            grServos.Visibility = Visibility.Visible;
+                            sWinch.IsEnabled = true;
+                            sRudder.IsEnabled = true;
 
-                        sWinch.Value = 0;
-                        sRudder.Value = 90;
+                            sWinch.Value = 0;
+                            sRudder.Value = 90;
+                        }
+                    }else if(code.Equals("CP") && message.Equals("?0"))
+                    {
+                        gCompass.Background = brushItemError;
+                        lCompass.Content = "Reporting Disabled";
+                    }
+                    else if (code.Equals("WV") && message.Equals("?0"))
+                    {
+                        gWind.Background = brushItemError;
+                        lWind.Content = "Reporting Disabled";
+                    }
+                    else if (code.Equals("GP") && message.Equals("?0"))
+                    {
+                        gGPS.Background = brushItemError;
+                        lGPS.Content = "Reporting Disabled";
                     }
                 }
             }
@@ -320,14 +387,22 @@ namespace QMAST
 
         private void consPrint(string message)
         {
-
-            tbCons.Text = tbCons.Text + message;
-
-            if (tbCons.Text.Length > 100000)
+            if (consOutputEnabled)
             {
-                tbCons.Text = tbCons.Text.Substring(tbCons.Text.Length - 100000);
+                consoleOutputBuffer.Append(message);
+
+                if (consoleOutputBuffer.ToString().Length > 1000)
+                {
+                    consoleOutputBuffer.Remove(0, consoleOutputBuffer.ToString().Length - 1000);
+                }
+
+                Dispatcher.Invoke((Action)delegate ()
+                {
+                    tbCons.Text = consoleOutputBuffer.ToString();
+                    svCons.ScrollToBottom();
+                });
             }
-            svCons.ScrollToBottom();
+
         }
 
         private void sServOverride_Checked(object sender, RoutedEventArgs e)
@@ -344,7 +419,8 @@ namespace QMAST
         {
             int iDegree = (int)sWinch.Value;
             tbWinch.Text = iDegree + "% sheeted in";
-            if(Math.Abs(lastWinch-iDegree) > 2 || iDegree == 0 || iDegree == 100)
+            iDegree = (iDegree) * (180) / (100);
+            if (Math.Abs(lastWinch - iDegree) > 2 || iDegree == 0 || iDegree == 100)
             {
                 sendTransmission("SW", "" + iDegree);
                 lastWinch = iDegree;
@@ -420,6 +496,20 @@ namespace QMAST
             {
                 sendConsoleMessage();
             }
+        }
+
+        private void sCons_Checked(object sender, RoutedEventArgs e)
+        {
+            tbCons.Foreground = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            consOutputEnabled = true;
+            tbCons.Text = "";
+        }
+
+        private void sCons_Unchecked(object sender, RoutedEventArgs e)
+        {
+            consoleOutputBuffer.Clear();
+            tbCons.Foreground = new SolidColorBrush(Color.FromArgb(80,255, 255, 255));
+            consOutputEnabled = false;
         }
     }
 }

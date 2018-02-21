@@ -133,6 +133,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Border Grid.Row="0" Padding="10,4,10,4" Margin="2,0,0,0" Background="#80000000" VerticalAlignment="Top">
                     <Grid>
@@ -172,35 +173,37 @@
                         </Grid>
                     </Grid>
                 </Border>
-                <Border Grid.Row="1" Padding="0,4,0,0" Margin="2,1,0,0" Background="#80000000">
+                <Border Grid.Row="1" Padding="0,4,0,0" Margin="2,1,0,0" Background="#80000000" >
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
                         <Image Margin="10,0,0,0" Grid.Row="0" Height="24" Source="router-wireless.png" 
                                VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <TextBlock Grid.Row="0" VerticalAlignment="Center"  TextWrapping="Wrap" FontSize="18" Margin="40,0,0,0" ><Run Text="Wireless Console"/></TextBlock>
+                        <Controls:ToggleSwitch Margin="0,0,10,0" Grid.Row="0" x:Name="sCons" OnLabel="" OffLabel="" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{DynamicResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Checked="sCons_Checked" Unchecked="sCons_Unchecked"/>
 
-                        <ScrollViewer x:Name="svCons" Grid.Row="1" Margin="0,4,0,0">
-                            <TextBlock x:Name="tbCons" TextWrapping="Wrap" Padding="4,0,4,0" Background="#80000000"/>
+                        <Label Grid.Row="0" VerticalAlignment="Center"  Content="Wireless Console" FontSize="18" Margin="40,0,63,0" />
+
+                        <ScrollViewer x:Name="svCons" Grid.Row="1" Margin="0,4,0,0" Visibility="Visible" VerticalAlignment="Stretch">
+                            <TextBlock x:Name="tbCons" TextWrapping="Wrap" Padding="4,0,4,0" Background="#80000000" Text="{Binding ConsOutput, Mode=OneWay}"/>
                         </ScrollViewer>
 
-                        <Border Background="#80000000" Grid.Row="2" Margin="0,2,0,0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="25"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
+                        
+                    </Grid>
+                </Border>
+                <Border Background="#80000000" Grid.Row="2" Margin="2,2,0,0" VerticalAlignment="Bottom">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="25"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
 
-                                <Image Grid.Column="0" Height="15" VerticalAlignment="Center" Source="console-line.png"/>
-                                <TextBox x:Name="tbConsInput" Grid.Column="1" Background="#80000000"  BorderThickness="0" KeyUp="tbConsInput_KeyUp"></TextBox>
-                                <Button x:Name="bConsSend" Grid.Column="2" Background="#80000000" BorderThickness="0" Width="50" Click="bConsSend_Click">Send</Button>
-                            </Grid>
-                        </Border>
+                        <Image Grid.Column="0" Height="15" VerticalAlignment="Center" Source="console-line.png"/>
+                        <TextBox x:Name="tbConsInput" Grid.Column="1" Background="#80000000"  BorderThickness="0" KeyUp="tbConsInput_KeyUp"></TextBox>
+                        <Button x:Name="bConsSend" Grid.Column="2" Background="#80000000" BorderThickness="0" Width="50" Click="bConsSend_Click">Send</Button>
                     </Grid>
                 </Border>
             </Grid>

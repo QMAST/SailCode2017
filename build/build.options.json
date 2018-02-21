@@ -1,0 +1,10 @@
+{
+  "builtInLibrariesFolders": "C:\\Program Files (x86)\\Arduino\\libraries",
+  "customBuildProperties": "build.path=c:\\Users\\angel\\Documents\\GitHub\\SailCode2017\\build,build.warn_data_percentage=75,runtime.tools.avr-gcc.path=C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\4.8.1-arduino5,runtime.tools.avrdude.path=C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avrdude\\6.0.1-arduino5",
+  "fqbn": "arduino:avr:mega:cpu=atmega2560",
+  "hardwareFolders": "C:\\Program Files (x86)\\Arduino\\hardware,C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\angel\\Documents\\Arduino\\libraries",
+  "runtime.ide.version": "10805",
+  "sketchLocation": "c:\\Users\\angel\\Documents\\GitHub\\SailCode2017\\Arduino\\QMAST_Main\\QMAST_Main.ino",
+  "toolsFolders": "C:\\Program Files (x86)\\Arduino\\tools-builder,C:\\Program Files (x86)\\Arduino\\hardware\\tools\\avr,C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages"
+}
