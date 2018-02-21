@@ -77,7 +77,7 @@ void heartbeat() {
     if(rpiLastResponse != 0 && currentMillis - rpiLastResponse >= 40000){
         setAutopilot(false); // Disable autopilot and enable RC if RPi fails
     }
-  } else if (currentMillis - rpiLastQuery >= 20000) {
+  } else if (currentMillis - rpiLastQuery >= 20000 && currentMillis - rpiLastQuery >= 5000) {
     // If the RPi responded 20 seconds ago, send another query transmission to check if it is still alive
     sendTransmission(PORT_RPI, "00", "?");
     rpiLastQuery = currentMillis;
@@ -85,14 +85,14 @@ void heartbeat() {
 
   // Check if the XBee is connected/alive
   // One query period for the XBee is 10 seconds (longer because link unstable)
-  if (xbeeLastResponse == 0 || currentMillis - xbeeLastResponse >= 20000) {
+  if (xbeeLastResponse == 0 || abs(currentMillis - xbeeLastResponse) >= 20000) {
     // If the XBee has never responded or if it's last response was over 20 seconds ago (two query periods)
     // Send query transmissions every 5 seconds
-    if (currentMillis - xbeeLastQuery >= 5000) {
+    if (abs(currentMillis - xbeeLastQuery) >= 5000) {
       sendTransmission(PORT_XBEE, "00", "?");
       xbeeLastQuery = currentMillis;
     }
-  } else if (currentMillis - xbeeLastResponse >= 10000) {
+  } else if (abs(currentMillis - xbeeLastResponse) >= 10000 && abs(currentMillis - xbeeLastQuery) >= 5000) {
     // If the XBee responded 10 seconds ago, send another query transmission to check if it is still alive
     sendTransmission(PORT_XBEE, "00", "?");
     xbeeLastQuery = currentMillis;
@@ -110,7 +110,13 @@ void setAutopilot(bool state) {
 
 void setLastResponse(int port) {
   // Called when a device responds to a alive/connected query transmission
-  if (port == SERIAL_PORT_XBEE) xbeeLastResponse = xbeeLastQuery = millis();
-  if (port == SERIAL_PORT_RPI) rpiLastResponse = rpiLastQuery = millis();
+  if (port == PORT_XBEE) {
+    xbeeLastResponse = millis();
+    xbeeLastQuery = millis();
+  }
+  if (port == PORT_RPI) {
+    rpiLastResponse = millis();
+    rpiLastQuery = millis();
+  }
 }
 
