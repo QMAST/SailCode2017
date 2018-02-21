@@ -1,0 +1,82 @@
+[
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.10\\cores\\arduino"
+  },
+  {
+    "Sourcefile": "",
+    "Include": "",
+    "Includepath": "C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.10\\variants\\mega"
+  },
+  {
+    "Sourcefile": "c:\\Users\\angel\\Documents\\GitHub\\SailCode2017\\build\\sketch\\QMAST_Main.ino.cpp",
+    "Include": "Adafruit_GPS.h",
+    "Includepath": "C:\\Users\\angel\\Documents\\Arduino\\libraries\\Adafruit_GPS_Library"
+  },
+  {
+    "Sourcefile": "c:\\Users\\angel\\Documents\\GitHub\\SailCode2017\\build\\sketch\\QMAST_Main.ino.cpp",
+    "Include": "SoftwareSerial.h",
+    "Includepath": "C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.10\\libraries\\SoftwareSerial\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\angel\\Documents\\GitHub\\SailCode2017\\build\\sketch\\QMAST_Main.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.10\\libraries\\Wire\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\angel\\Documents\\GitHub\\SailCode2017\\build\\sketch\\QMAST_Main.ino.cpp",
+    "Include": "Servo.h",
+    "Includepath": "C:\\Program Files (x86)\\Arduino\\libraries\\Servo\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\angel\\Documents\\GitHub\\SailCode2017\\build\\sketch\\QMAST_Main.ino.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\angel\\Documents\\Arduino\\libraries\\Adafruit_GPS_Library\\Adafruit_GPS.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.10\\libraries\\SoftwareSerial\\src\\SoftwareSerial.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.10\\libraries\\Wire\\src\\Wire.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Users\\angel\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.6.10\\libraries\\Wire\\src\\utility\\twi.c",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Program Files (x86)\\Arduino\\libraries\\Servo\\src\\avr\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Program Files (x86)\\Arduino\\libraries\\Servo\\src\\nrf52\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Program Files (x86)\\Arduino\\libraries\\Servo\\src\\sam\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Program Files (x86)\\Arduino\\libraries\\Servo\\src\\samd\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  },
+  {
+    "Sourcefile": "C:\\Program Files (x86)\\Arduino\\libraries\\Servo\\src\\stm32f4\\Servo.cpp",
+    "Include": "",
+    "Includepath": ""
+  }
+]
