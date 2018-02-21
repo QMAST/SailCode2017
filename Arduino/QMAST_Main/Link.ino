@@ -69,6 +69,7 @@ void executeCommonTransmission(int port, String code, String data) {
   if (data.charAt(0) == '?') {
     // Handle requests to change transmission interval (no other message has ? as it's first character)
     setSensorTransInterval(port, code, data.substring(1).toInt());
+    
   } else if (code.equals("00")) {
     if (data.equals("1")) setLastResponse(port);
   } else if (code.equals("02")) {

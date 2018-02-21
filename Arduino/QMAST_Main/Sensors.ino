@@ -134,11 +134,11 @@ void sendSensors() {
   // If the interval has passed, send the updated data
   unsigned long currentMillis = millis();
   for (int i = 0; i < NUMBER_OF_CODES; i++) {
-    if (abs(currentMillis - sensorLastTransXBee[i]) >= sensorTransIntervalXBee[i] && sensorTransIntervalXBee[i] != 0) {
+    if (abs(currentMillis - sensorLastTransXBee[i]) >= sensorTransIntervalXBee[i] && sensorTransIntervalXBee[i] != 0 && !sensorStates[i].equals("")) {
       sendTransmission(PORT_XBEE, sensorCodes[i], sensorStates[i]);
       sensorLastTransXBee[i] = currentMillis;
     }
-    if (abs(currentMillis - sensorLastTransRPi[i]) >= sensorTransIntervalRPi[i] && sensorTransIntervalRPi[i] != 0) {
+    if (abs(currentMillis - sensorLastTransRPi[i]) >= sensorTransIntervalRPi[i] && sensorTransIntervalRPi[i] != 0 && !sensorStates[i].equals("")) {
       sendTransmission(PORT_RPI, sensorCodes[i], sensorStates[i]);
       sensorLastTransRPi[i] = currentMillis;
       DEBUG_PRINT(sensorCodes[i]);
@@ -156,8 +156,11 @@ void setSensorTransInterval(int port, String code, int interval) {
     // Cycle through all of the sensor codes to find the one needing updating
     if (code.equals(sensorCodes[i])) {
       // Update the sensor transmission interval for the device sending the request
-      if (port == SERIAL_PORT_XBEE) sensorTransIntervalXBee[i] = interval;
-      if (port == SERIAL_PORT_RPI) sensorTransIntervalRPi[i] = interval;
+      if (port == PORT_XBEE) {
+        if(interval !=0 && interval < 250) interval = 250; // After testing, the GUI does not respond to absurdly fast updates
+        sensorTransIntervalXBee[i] = interval;
+      }
+      if (port == PORT_RPI) sensorTransIntervalRPi[i] = interval;
       break;
     }
   }
