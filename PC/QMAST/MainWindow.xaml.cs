@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System;
 using System.IO.Ports;
-
+using System.Windows.Media.Animation;
 
 namespace QMAST
 {
@@ -43,6 +43,8 @@ namespace QMAST
         bool portScanning = false;
 
         bool consOutputEnabled = false;
+
+        Duration defAnimDuration = new Duration(TimeSpan.FromSeconds(0.25));
 
         public MainWindow()
         {
@@ -160,6 +162,7 @@ namespace QMAST
                 gCompass.Background = brushItemError;
                 gWind.Background = brushItemError;
                 gGPS.Background = brushItemError;
+
             }
 
             if (state == 0 && currentState != 0)
@@ -167,32 +170,75 @@ namespace QMAST
                 // XBee disconnected
                 lSubTitle.Content = "XBee Disconnected";
                 iState.Source = new BitmapImage(new Uri(@"/alert-circle.png", UriKind.Relative));
-                gState.Background = new SolidColorBrush(Color.FromRgb(183, 28, 28));
-                currentState = 0;
+                //gState.Background = new SolidColorBrush(Color.FromRgb(183, 28, 28));
                 tbConsInput.IsEnabled = false;
                 bConsSend.IsEnabled = false;
                 sCons.IsEnabled = false;
                 sCons.IsChecked = false;
+
+
+                ColorAnimation animation = new ColorAnimation();
+                animation.Duration = defAnimDuration;
+                animation.To = Color.FromRgb(183, 28, 28);
+                if (currentState == 1)
+                {
+                    animation.From = Color.FromRgb(230, 81, 0);
+                }
+                else
+                {
+                    animation.From = Color.FromRgb(1, 87, 155);
+                }
+                gState.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+
+                currentState = 0;
             }
             else if (state == 1 && currentState != 1)
             {
                 // Boat offline, XBee connected
                 lSubTitle.Content = "XBee Connected";
                 iState.Source = new BitmapImage(new Uri(@"/lan-pending.png", UriKind.Relative));
-                gState.Background = new SolidColorBrush(Color.FromRgb(230, 81, 0));
-                currentState = 1;
+                //gState.Background = new SolidColorBrush(Color.FromRgb(230, 81, 0));
                 tbConsInput.IsEnabled = true;
                 bConsSend.IsEnabled = true;
                 sCons.IsEnabled = true;
+
+                ColorAnimation animation = new ColorAnimation();
+                animation.Duration = defAnimDuration;
+                animation.To = Color.FromRgb(230, 81, 0);
+                if (currentState == 0)
+                {
+                    animation.From = Color.FromRgb(183, 28, 28);
+                }
+                else
+                {
+                    animation.From = Color.FromRgb(1, 87, 155);
+                }
+                gState.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+
+                currentState = 1;
             }
             else if (state == 2 && currentState != 2)
             {
                 // Boat online
                 lTitle.Content = "Boat Online";
                 iState.Source = new BitmapImage(new Uri(@"/lan-connect.png", UriKind.Relative));
-                gState.Background = new SolidColorBrush(Color.FromRgb(1, 87, 155));
+                //gState.Background = new SolidColorBrush(Color.FromRgb(1, 87, 155));
                 sServOverride.IsEnabled = true;
                 boatHeartbeatTimer.Start(); // Start boat offline countdown
+
+                ColorAnimation animation = new ColorAnimation();
+                animation.Duration = defAnimDuration;
+                animation.To = Color.FromRgb(1, 87, 155);
+                if (currentState == 0)
+                {
+                    animation.From = Color.FromRgb(183, 28, 28);
+                }
+                else
+                {
+                    animation.From = Color.FromRgb(230, 81, 0);
+                }
+                gState.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+
                 currentState = 2;
             }
         }
