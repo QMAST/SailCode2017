@@ -33,12 +33,13 @@ The Mega will send PX0 if no object is detected. The Mega will send `PXX;` with 
 **Not yet implemented, specification unknown.**
 ### 0x Series – Diagnostics and Basic Features
 #### 00 - Device Online/Mode
-`00?;` is used to check if the RPi/Xbee is online. Once received, the device should respond with `001;`. 
-The Mega sends `00X;` with X indicating the device state (0 = Error/Disabled, 1 = Remote Control (Default), 2 = Autopiloted by RPi). By default the Mega will send `00X;` to the RPi and XBee every 3 seconds while on. The Mega will send `00?;` to check RPi/Xbee response every 5 seconds initially and if the device misses a response. Once the connection is initially established, the Mega will send `00?;` every 20 seconds to verify that the device is still alive.
+The Mega sends `00X;` with X indicating the device state (0 = Error/Disabled, 1 = Remote Control (Default), 2 = Autopiloted by RPi) to the RPi and XBee every 3 seconds while on. 
+
+`00?;` is used to check if the RPi/Xbee is online. Once received, the device should respond with `001;`. The Mega will send `00?;` to check RPi/Xbee response every 5 seconds initially and if the device misses a response. Once the connection is initially established, the Mega will send `00?;` every 10 seconds to verify that the device is still alive.
 
 Received by | Action/Response 
 ---|---
-Mega | Saves the last response time of the RPi/XBee. If RPi does not respond in 20 seconds, the RPi is assumed to be offline and the Mega will send `091;` to the XBee. The Mega ignores `00?;` messages.
+Mega | Saves the last response time of the RPi/XBee. The Mega ignores `00?;` messages.
 RPi | Responds to the Mega's `00?;` with `001;`
 XBee | Responds to the Mega's `00?;` with `001;`
 #### 01 - Device Powered On
@@ -82,8 +83,8 @@ Received by | Action/Response
 ---|---
 RPi | Stops autopilot
 XBee | Updates GUI, show error notification
-#### 09 - RPi Offline
-`091;` is sent by the Mega to the XBee if the RPi is not responding to `00?;` (device online) pings. The Mega will also simultaneously disable autopilot and enable RC control.
+#### 09 - RPi Status
+The Mega sends `09X;` with X indicating the RPi device state (0 = Offline, 1 = Online, 2 = Error) to the XBee every 3 seconds. RPi status is determined through `00?;` (device online) pings.
 
 Received by | Action/Response 
 ---|---
