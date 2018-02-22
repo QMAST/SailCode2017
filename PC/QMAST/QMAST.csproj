@@ -185,6 +185,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Asset 1.svg" />
+    <Resource Include="volume-off.png" />
+    <Resource Include="volume-high.png" />
+    <None Include="audio\notif.wav" />
+    <Resource Include="xbee_unplugged.png" />
     <Resource Include="logo.png.ico" />
     <Resource Include="infinity.png" />
     <Resource Include="lan-connect.png" />
