@@ -17,6 +17,9 @@ namespace QMAST
     /// </summary>
     public partial class MainWindow
     {
+
+        bool debugDevice = true;
+
         // UI elements
         Duration defAnimDuration = new Duration(TimeSpan.FromSeconds(0.25)); // Animation duration for header color changes
         Brush brushItemError = new SolidColorBrush(Color.FromArgb(204, 183, 28, 28)); // Red background for error items
@@ -95,7 +98,7 @@ namespace QMAST
                 // When you send "+++" over serial to an XBee, it will enter command mode and respond with "OK"
                 // We will be using this attribute to identify a connected serial device as an XBee
                 // During each tick of the timer, we will move on to the next serial device, in the meantime, responses are monitored in another function
-                //portScanning = true;
+                if (debugDevice == false) portScanning = true;
                 portTimer.Interval = TimeSpan.FromMilliseconds(1250); // Speed up the timer tick as much as possible, without missing the response from an XBee
 
                 // Update the state to reflect no XBee connected
@@ -151,7 +154,9 @@ namespace QMAST
                     if (myPort != null && myPort.IsOpen) myPort.Close(); // Close the previous serial port
                     try
                     {
-                        myPort = new SerialPort(detectedPorts[nextPortIndex], 115200);
+                        
+                        if(debugDevice == true) myPort = new SerialPort(detectedPorts[nextPortIndex], 115200);
+                        if (debugDevice == false) myPort = new SerialPort(detectedPorts[nextPortIndex], 57600);
                         myPort.Open();
                         myPort.DataReceived += new SerialDataReceivedEventHandler(myPort_DataReceived);
                         myPort.Write("+++");
