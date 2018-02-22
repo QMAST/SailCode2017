@@ -19,7 +19,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid x:Name="gState" Background="#B71C1C" Grid.Row="0">
-            <Image x:Name="iState" Width="40" Height="40" Margin="10,10,0,10" HorizontalAlignment="Left" Source="alert-circle.png"/>
+            <Image x:Name="iState" Width="40" Height="40" Margin="10,10,0,10" HorizontalAlignment="Left" Source="xbee_unplugged.png"/>
             <Label x:Name="lTitle" Content="Boat Offline" HorizontalAlignment="Left" Margin="54,0,0,0" VerticalAlignment="Top" FontSize="24" Foreground="White" Grid.ColumnSpan="2"/>
             <Label x:Name="lSubTitle" Content="XBee Disconnected" HorizontalAlignment="Left" Margin="56,30,0,4" VerticalAlignment="Top" FontSize="14" Foreground="White"/>
         </Grid>
@@ -57,6 +57,7 @@
                                 <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top" Content="Operating Mode" FontSize="12" />
                                 <Label x:Name="lMode" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
                             </Grid>
+                            <Image x:Name="imMode" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Height="16" Source="volume-off.png" Focusable="True" TouchUp="imMode_Tap" MouseUp="imMode_Tap" Margin="0,23.9,0,0" ToolTip="Mute or unmute error alarm" StylusUp="imMode_Tap"/>
                         </Grid>
                     </Border>
                     <Border x:Name="gRPi" Grid.Row="2" Background="#CCB71C1C" Padding="14,8,10,8" Margin="0,0,0,1" VerticalAlignment="Top">
@@ -74,6 +75,7 @@
                                 <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Raspberry Pi" FontSize="12" />
                                 <Label x:Name="lRPi" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
                             </Grid>
+                            <Image x:Name="imRPi" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Height="16" Source="volume-off.png" Focusable="True" TouchUp="imRPi_Tap" MouseUp="imRPi_Tap" Margin="0,23.9,0,0" ToolTip="Mute or unmute error alarm" StylusUp="imRPi_Tap"/>
                         </Grid>
                     </Border>
                     <Border x:Name="gCompass" Grid.Row="3" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
@@ -116,7 +118,7 @@
                                 <ColumnDefinition Width="25" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image x:Name="iGPS" Height="25" Grid.Column="0" Source="map-marker.png"/>
+                            <Image x:Name="iGPS" Height="25" Grid.Column="0" Source="map-marker-off.png"/>
                             <Grid Grid.Column="1" VerticalAlignment="Center">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -150,7 +152,7 @@
                             <TextBlock Grid.Row="0" VerticalAlignment="Center"  TextWrapping="Wrap" FontSize="18" Margin="30,0,0,0" ><Run Text="Servos"/></TextBlock>
                         </Grid>
                         <TextBlock Grid.Row="1" VerticalAlignment="Center"  TextWrapping="Wrap" FontSize="12" ><Run Text="Override remote control"/></TextBlock>
-                        <Controls:ToggleSwitch x:Name="sServOverride" OnLabel="" OffLabel="" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{DynamicResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Checked="sServOverride_Checked" Unchecked="sServOverride_Unchecked" IsEnabled="False"/>
+                        <Controls:ToggleSwitch x:Name="sServOverride" OnLabel="" OffLabel="" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{DynamicResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Checked="sServOverride_Checked" Unchecked="sServOverride_Unchecked" IsEnabled="False" ToolTip="Manually control servos and disable the RC"/>
 
                         <Grid x:Name="grServos" Grid.Row="2" Visibility="Collapsed">
                             <Grid.RowDefinitions>
@@ -182,7 +184,7 @@
 
                         <Image Margin="10,0,0,0" Grid.Row="0" Height="24" Source="router-wireless.png" 
                                VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                        <Controls:ToggleSwitch Margin="0,0,10,0" Grid.Row="0" x:Name="sCons" OnLabel="" OffLabel="" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{DynamicResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Checked="sCons_Checked" Unchecked="sCons_Unchecked"/>
+                        <Controls:ToggleSwitch Margin="0,0,10,0" Grid.Row="0" x:Name="sCons" OnLabel="" OffLabel="" VerticalAlignment="Center" HorizontalAlignment="Right" Style="{DynamicResource MahApps.Metro.Styles.ToggleSwitch.Win10}" Checked="sCons_Checked" Unchecked="sCons_Unchecked" IsEnabled="False" ToolTip="Enable or disable logging to the text console"/>
 
                         <Label Grid.Row="0" VerticalAlignment="Center"  Content="Wireless Console" FontSize="18" Margin="40,0,63,0" />
 
@@ -190,7 +192,7 @@
                             <TextBlock x:Name="tbCons" TextWrapping="Wrap" Padding="4,0,4,0" Background="#80000000" Text="{Binding ConsOutput, Mode=OneWay}"/>
                         </ScrollViewer>
 
-                        
+
                     </Grid>
                 </Border>
                 <Border Background="#80000000" Grid.Row="2" Margin="2,2,0,0" VerticalAlignment="Bottom">
@@ -202,8 +204,8 @@
                         </Grid.ColumnDefinitions>
 
                         <Image Grid.Column="0" Height="15" VerticalAlignment="Center" Source="console-line.png"/>
-                        <TextBox x:Name="tbConsInput" Grid.Column="1" Background="#80000000"  BorderThickness="0" KeyUp="tbConsInput_KeyUp"></TextBox>
-                        <Button x:Name="bConsSend" Grid.Column="2" Background="#80000000" BorderThickness="0" Width="50" Click="bConsSend_Click">Send</Button>
+                        <TextBox x:Name="tbConsInput" Grid.Column="1" Background="#80000000"  BorderThickness="0" KeyUp="tbConsInput_KeyUp" IsEnabled="False"></TextBox>
+                        <Button x:Name="bConsSend" Grid.Column="2" Background="#80000000" BorderThickness="0" Width="50" Click="bConsSend_Click" IsEnabled="False">Send</Button>
                     </Grid>
                 </Border>
             </Grid>
