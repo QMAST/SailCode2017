@@ -18,8 +18,6 @@ namespace QMAST
     public partial class MainWindow
     {
 
-        bool debugDevice = true;
-
         // UI elements
         Duration defAnimDuration = new Duration(TimeSpan.FromSeconds(0.25)); // Animation duration for header color changes
         Brush brushItemError = new SolidColorBrush(Color.FromArgb(204, 183, 28, 28)); // Red background for error items
@@ -98,11 +96,12 @@ namespace QMAST
                 // When you send "+++" over serial to an XBee, it will enter command mode and respond with "OK"
                 // We will be using this attribute to identify a connected serial device as an XBee
                 // During each tick of the timer, we will move on to the next serial device, in the meantime, responses are monitored in another function
-                if (debugDevice == false) portScanning = true;
+                portScanning = true;
                 portTimer.Interval = TimeSpan.FromMilliseconds(1250); // Speed up the timer tick as much as possible, without missing the response from an XBee
 
                 // Update the state to reflect no XBee connected
                 Dispatcher.Invoke((Action)delegate () { setState(0); }); // Must be run on the UI thread
+                boatHeartbeatTimer.Stop(); // Stop the timeout timer
 
                 // If no ports were detected last time or if all known ports have been cycled through, get a new list of ports!
                 if (detectedPorts == null || detectedPorts.Length == 0 || nextPortIndex >= detectedPorts.Length)
@@ -129,7 +128,10 @@ namespace QMAST
         {
             // If the timer manages to tick, it means the boat has not responded in two heartbeat intervals
             // The boat is probably off or not in range, update the GUI to reflect that
-            Dispatcher.Invoke((Action)delegate () { setState(1); }); // Must be run on the UI thread
+            Dispatcher.Invoke((Action)delegate () { setState(1);
+                //tbCons.Text = tbCons.Text + ("\nTIMEOUT");
+            }); // Must be run on the UI thread
+            boatHeartbeatTimer.Stop();
         }
 
         private void checkPortsForXBee()
@@ -155,11 +157,11 @@ namespace QMAST
                     try
                     {
                         
-                        if(debugDevice == true) myPort = new SerialPort(detectedPorts[nextPortIndex], 115200);
-                        if (debugDevice == false) myPort = new SerialPort(detectedPorts[nextPortIndex], 57600);
+                        myPort = new SerialPort(detectedPorts[nextPortIndex], 57600);
                         myPort.Open();
                         myPort.DataReceived += new SerialDataReceivedEventHandler(myPort_DataReceived);
                         myPort.Write("+++");
+                        xbeeInputBuffer.Clear();
                         portSelected = true; // Only when the port has been opened and written to properly do we exit the loop
                     }
                     catch (System.IO.IOException)
@@ -183,12 +185,30 @@ namespace QMAST
         // (0 = XBee disconnected, 1 = XBee connected, Boat offline, 3 = Boat online)
         private void setState(int state)
         {
-            // If the state is not remaining in 2 (boat connected), stop the boat heartbeat timer
-            if (boatHeartbeatTimer != null && (state == 2 && currentState == 2)) boatHeartbeatTimer.Stop();
+            //tbCons.Text = tbCons.Text + "> last state:" + currentState + ", current state:" + state;
+
+            // Update the UI elements associated with losing boat conection through both XBee disconnect and heartbeat timeout
+            if ((state == 0 || state == 1) && (currentState == 2)) // If the connection to the boat was just lost...
+            {
+                // Update the header
+                lTitle.Content = "Boat Offline";
+                // Turn off/disable servo override
+                sServOverride.IsChecked = false;
+                sServOverride.IsEnabled = false;
+                // Make all the status item backgrounds red
+                gMode.Background = brushItemError;
+                gRPi.Background = brushItemError;
+                gCompass.Background = brushItemError;
+                gWind.Background = brushItemError;
+                gGPS.Background = brushItemError;
+
+                boatMode = -1;
+            }
 
             // Update the UI elements only once when first entering the state
             if (state == 0 && currentState != 0) // If the XBee is disconnected...
             {
+                //tbCons.Text = tbCons.Text + ("\nOFFLINE");
                 // Update the header
                 lSubTitle.Content = "XBee Disconnected";
                 iState.Source = imsXBeeUnplugged;
@@ -212,6 +232,7 @@ namespace QMAST
             }
             else if (state == 1 && currentState != 1) // If the boat is offline but the XBee is connected...
             {
+                //tbCons.Text = tbCons.Text + ("\nXBEE");
                 // Update the header
                 lSubTitle.Content = "XBee Connected";
                 iState.Source = imsBoatOffline;
@@ -234,6 +255,8 @@ namespace QMAST
             }
             else if (state == 2 && currentState != 2) // Boat is online
             {
+                //tbCons.Text = tbCons.Text + ("\nONLINE");
+
                 // Update the header
                 lTitle.Content = "Boat Online";
                 iState.Source = imsBoatOnline;
@@ -248,24 +271,17 @@ namespace QMAST
                 // Enable servo overriding
                 sServOverride.IsEnabled = true;
 
+                // Enable the command input bar
+                tbConsInput.IsEnabled = true;
+
+                // Enable the console
+                bConsSend.IsEnabled = true;
+                sCons.IsEnabled = true;
+
                 currentState = state; // Record the current state
             }
 
-            // Update the UI elements associated with losing boat conection through both XBee disconnect and heartbeat timeout
-            if ((state == 0 || state == 1) && (currentState == 2)) // If the connection to the boat was just lost...
-            {
-                // Update the header
-                lTitle.Content = "Boat Offline";
-                // Turn off/disable servo override
-                sServOverride.IsChecked = false;
-                sServOverride.IsEnabled = false;
-                // Make all the status item backgrounds red
-                gMode.Background = brushItemError;
-                gRPi.Background = brushItemError;
-                gCompass.Background = brushItemError;
-                gWind.Background = brushItemError;
-                gGPS.Background = brushItemError;
-            }
+            
         }
 
         private void myPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
@@ -311,9 +327,18 @@ namespace QMAST
                     portScanning = false; // Stop scanning for ports in the timer
                     portTimer.Interval = TimeSpan.FromMilliseconds(3000); // Increase the timer to 3 seconds to reduce background computations.
                     // It's not necessary to respond to XBee unplugged messages "that quickly"
-                    myPort.WriteLine("ATCN"); // Take the XBee out of command mode
                     //consPrintln("\n\n--- Connected to XBee ---\n");
-                    Dispatcher.Invoke((Action)delegate () { setState(1); }); // Update the GUI to show that an XBee is present
+                    Dispatcher.Invoke((Action)delegate () {
+                        if (currentState != 2)
+                        {
+                            setState(1);
+                        }
+                        else
+                        {
+                            lSubTitle.Content = "XBee Connected";
+                        }
+                    }); // Update the GUI to show that an XBee is present
+                    myPort.WriteLine("ATCN"); // Take the XBee out of command mode
                     xbeeInputBuffer.Clear(); // Clear the input buffer (may lose some applicable text but oh well)
                 }
             }
@@ -323,6 +348,11 @@ namespace QMAST
         {
             if (code.Equals("00")) // The boat is communicating state or requesting a response
             {
+                if(data.Equals("0") || data.Equals("1") || data.Equals("2"))
+                {
+                    boatHeartbeatTimer.Stop();
+                    boatHeartbeatTimer.Start();
+                }
 
                 if (data.Equals("0") && boatMode != 0)
                 {

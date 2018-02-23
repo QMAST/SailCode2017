@@ -7,11 +7,11 @@
         xmlns:local="clr-namespace:QMAST"
         mc:Ignorable="d"
                       
-        BorderBrush="{DynamicResource AccentColorBrush}"
-                      BorderThickness="3"
+        GlowBrush="#212121"
+        BorderThickness="0"
 
-        ShowIconOnTitleBar="False"
-        Title="QMAST Control" Height="500" Width="600" ResizeMode="CanMinimize" Icon="logo.png">
+        ShowIconOnTitleBar="True"
+        Title="QMAST Control" Height="500" Width="600" ResizeMode="CanMinimize" Icon="icon.png">
 
     <Grid>
         <Grid.RowDefinitions>
