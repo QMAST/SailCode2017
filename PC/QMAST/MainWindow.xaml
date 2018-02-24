@@ -11,7 +11,7 @@
         BorderThickness="0"
 
         ShowIconOnTitleBar="True"
-        Title="QMAST Control" Height="500" Width="600" ResizeMode="CanMinimize" Icon="icon.png">
+        Title="QMAST Control" Height="500" Width="600" Icon="icon.png" MinWidth="550" MinHeight="450">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -166,7 +166,7 @@
 
                             <TextBlock Grid.Row="0" Margin="0,4,0,0" TextWrapping="Wrap" FontSize="12" ><Run Text="Winch"/></TextBlock>
                             <TextBlock x:Name="tbWinch" Grid.Row="1" TextWrapping="Wrap" FontSize="18" ><Run Text="0% sheeted In"/></TextBlock>
-                            <Slider x:Name="sWinch" Grid.Row="2" Margin="0,4,0,0" Style="{DynamicResource MahApps.Metro.Styles.Slider.Win10}" TickFrequency="10" TickPlacement="Both" IsEnabled="False" ValueChanged="sWinch_ValueChanged"/>
+                            <Slider x:Name="sWinch" Grid.Row="2" Margin="0,4,0,0" Style="{DynamicResource MahApps.Metro.Styles.Slider.Win10}" TickFrequency="10" TickPlacement="Both" IsEnabled="False" ValueChanged="sWinch_ValueChanged" MaxWidth="500"/>
 
                             <TextBlock Grid.Row="3" Margin="0,10,0,0" TextWrapping="Wrap" FontSize="12" ><Run Text="Rudder"/></TextBlock>
                             <TextBlock x:Name="tbRudder" Grid.Row="4" TextWrapping="Wrap" FontSize="18" ><Run Text="0 Degrees"/></TextBlock>
