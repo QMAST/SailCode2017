@@ -22,7 +22,7 @@ Adafruit_GPS GPS(&SERIAL_PORT_GPS);
 #define ANGLE_8  1           // Register to read 8bit angle from
 unsigned char high_byte, low_byte, angle8;
 char pitch, roll;
-unsigned int angle16;
+unsigned int angle16, temp16;
 
 // Wind vane calibration variables
 #define WINDVANE_LOW 0
@@ -79,6 +79,20 @@ void checkSensors() {
     angle16 <<= 8;
     angle16 += low_byte;
     setSensor("CP", String(angle16 / 10));
+
+    // Update Temperature
+    Wire.beginTransmission(CMPS11_ADDRESS);  //starts communication with CMPS11
+    Wire.write(24);                     //Sends the register we wish to start reading from
+    Wire.endTransmission();
+    Wire.requestFrom(CMPS11_ADDRESS, 2);
+    while (Wire.available() < 2);       // Wait for all bytes to come back
+    high_byte = Wire.read();
+    low_byte = Wire.read();
+    temp16 = high_byte;                 // Calculate 16 bit temperature
+    temp16 <<= 8;
+    temp16 += low_byte;
+    
+    setSensor("TM", String(21.0 + (float) temp16 / 8.)); // Calculate the temperature (8LSB/C) + guess intervept
 
    // Update GPS
    if (GPS.fix) {
