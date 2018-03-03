@@ -22,6 +22,7 @@ namespace QMAST
         Duration defAnimDuration = new Duration(TimeSpan.FromSeconds(0.25)); // Animation duration for header color changes
         Brush brushItemError = new SolidColorBrush(Color.FromArgb(204, 183, 28, 28)); // Red background for error items
         Brush brushItem = new SolidColorBrush(Color.FromArgb(127, 0, 0, 0)); // Normal grey item background
+        // Load image resources here
         ImageSource imsXBeeUnplugged = new BitmapImage(new Uri(@"/xbee_unplugged.png", UriKind.Relative));
         ImageSource imsBoatOffline = new BitmapImage(new Uri(@"/lan-pending.png", UriKind.Relative));
         ImageSource imsBoatOnline = new BitmapImage(new Uri(@"/lan-connect.png", UriKind.Relative));
@@ -30,10 +31,10 @@ namespace QMAST
         ImageSource imsBoatAutopilot = new BitmapImage(new Uri(@"/infinity.png", UriKind.Relative));
         ImageSource imsGPSNoFix = new BitmapImage(new Uri(@"/map-marker-off.png", UriKind.Relative));
         ImageSource imsGPSFix = new BitmapImage(new Uri(@"/map-marker.png", UriKind.Relative));
-
+        // Color animations for the item backgrounds
         ColorAnimation animBlacktoRed;
         ColorAnimation animRedToBlack;
-
+        //Alarm tone for error/offline alerts
         System.Media.SoundPlayer player = new System.Media.SoundPlayer(Properties.Resources.notif);
         bool modeMuted = true;
         bool rPiMuted = true;
@@ -65,6 +66,8 @@ namespace QMAST
         public MainWindow()
         {
             InitializeComponent(); // Build UI
+
+            mwMain.WindowTitleBrush = new SolidColorBrush(Color.FromRgb(183, 28, 28));
 
             animBlacktoRed = new ColorAnimation();
             animBlacktoRed.Duration = defAnimDuration;
@@ -201,6 +204,7 @@ namespace QMAST
                 gCompass.Background = brushItemError;
                 gWind.Background = brushItemError;
                 gGPS.Background = brushItemError;
+                gTemp.Background = brushItemError;
 
                 boatMode = -1;
             }
@@ -219,6 +223,7 @@ namespace QMAST
                 if (currentState == 1) { animation.From = Color.FromRgb(230, 81, 0); }
                 else { animation.From = Color.FromRgb(1, 87, 155); }
                 gState.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                mwMain.WindowTitleBrush = new SolidColorBrush(Color.FromRgb(183, 28, 28));
 
                 // Disable the command input bar
                 tbConsInput.IsEnabled = false;
@@ -243,6 +248,7 @@ namespace QMAST
                 if (currentState == 0) { animation.From = Color.FromRgb(183, 28, 28); }
                 else { animation.From = Color.FromRgb(1, 87, 155); }
                 gState.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                mwMain.WindowTitleBrush = new SolidColorBrush(Color.FromRgb(230, 81, 0));
 
                 // Enable the command input bar
                 tbConsInput.IsEnabled = true;
@@ -267,6 +273,7 @@ namespace QMAST
                 if (currentState == 0) { animation.From = Color.FromRgb(183, 28, 28); }
                 else { animation.From = Color.FromRgb(230, 81, 0); }
                 gState.Background.BeginAnimation(SolidColorBrush.ColorProperty, animation);
+                mwMain.WindowTitleBrush = new SolidColorBrush(Color.FromRgb(1, 87, 155));
 
                 // Enable servo overriding
                 sServOverride.IsEnabled = true;
@@ -346,148 +353,162 @@ namespace QMAST
 
         private void executeTransmission(String code, String data) // Take action based on what the boat sends
         {
-            if (code.Equals("00")) // The boat is communicating state or requesting a response
+            if (data != null && !data.Equals(""))
             {
-                if(data.Equals("0") || data.Equals("1") || data.Equals("2"))
+                if (code.Equals("00")) // The boat is communicating state or requesting a response
                 {
-                    boatHeartbeatTimer.Stop();
-                    boatHeartbeatTimer.Start();
-                }
+                    if (data.Equals("0") || data.Equals("1") || data.Equals("2"))
+                    {
+                        boatHeartbeatTimer.Stop();
+                        boatHeartbeatTimer.Start();
+                    }
 
-                if (data.Equals("0") && boatMode != 0)
-                {
-                    // Mega is online but is experiencing an error
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                    if (data.Equals("0") && boatMode != 0)
                     {
-                        setState(2);
-                        lMode.Content = "Critical Error";
-                        iMode.Source = imsBoatError;
-                        gMode.Background = brushItemError;
-                    });
-                    boatMode = 0;
-                }
-                else if (data.Equals("1") && boatMode != 1)
-                {
-                    // Mega is online and under RC control
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                        // Mega is online but is experiencing an error
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            setState(2);
+                            lMode.Content = "Critical Error";
+                            iMode.Source = imsBoatError;
+                            gMode.Background = brushItemError;
+                        });
+                        boatMode = 0;
+                    }
+                    else if (data.Equals("1") && boatMode != 1)
                     {
-                        setState(2);
-                        lMode.Content = "Remote Control";
-                        iMode.Source = imsBoatRC;
-                        gMode.Background = brushItem;
-                    });
-                    boatMode = 1;
-                }
-                else if (data.Equals("2") && boatMode != 2)
-                {
-                    // Mega is online and under RPi control
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                        // Mega is online and under RC control
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            setState(2);
+                            lMode.Content = "Remote Control";
+                            iMode.Source = imsBoatRC;
+                            gMode.Background = brushItem;
+                        });
+                        boatMode = 1;
+                    }
+                    else if (data.Equals("2") && boatMode != 2)
                     {
-                        setState(2);
-                        lMode.Content = "Autopilot";
-                        iMode.Source = imsBoatAutopilot;
-                        gMode.Background = brushItem;
-                    });
-                    boatMode = 2;
-                }
-                else if (data.Equals("?"))
-                {
-                    // Mega is asking if XBee is online
-                    sendTransmission("00", "1");
-                }
-                if (data.Equals("0") && boatMode == 0 && modeMuted == false) player.Play();
-            }
-            else if (code.Equals("09")) // RPi state
-            {
-                // Update the UI accordingly, but only on the first run through
-                if (data.Equals("0") && rPiState != 0)
-                {
-                    // RPi is offline
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                        // Mega is online and under RPi control
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            setState(2);
+                            lMode.Content = "Autopilot";
+                            iMode.Source = imsBoatAutopilot;
+                            gMode.Background = brushItem;
+                        });
+                        boatMode = 2;
+                    }
+                    else if (data.Equals("?"))
                     {
-                        lRPi.Content = "Offline";
-                        gRPi.Background = brushItemError;
-                    });
-                    rPiState = 0;
+                        // Mega is asking if XBee is online
+                        sendTransmission("00", "1");
+                    }
+                    if (data.Equals("0") && boatMode == 0 && modeMuted == false) player.Play();
                 }
-                else if (data.Equals("1") && rPiState != 1)
+                else if (code.Equals("09")) // RPi state
                 {
-                    // RPi is online
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                    // Update the UI accordingly, but only on the first run through
+                    if (data.Equals("0") && rPiState != 0)
                     {
-                        lRPi.Content = "Online";
-                        gRPi.Background = brushItem;
-                    });
-                    rPiState = 1;
+                        // RPi is offline
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lRPi.Content = "Offline";
+                            gRPi.Background = brushItemError;
+                        });
+                        rPiState = 0;
+                    }
+                    else if (data.Equals("1") && rPiState != 1)
+                    {
+                        // RPi is online
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lRPi.Content = "Online";
+                            gRPi.Background = brushItem;
+                        });
+                        rPiState = 1;
+                    }
+                    else if (data.Equals("2") && rPiState != 2)
+                    {
+                        // RPi is experiencing an error
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lRPi.Content = "Critical Error";
+                            gRPi.Background = brushItemError;
+                        });
+                        rPiState = 2;
+                    }
+                    if (rPiState == 0 && rPiMuted == false) player.Play();
                 }
-                else if (data.Equals("2") && rPiState != 2)
+                else if (code.Equals("GP")) // GPS
                 {
-                    // RPi is experiencing an error
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                    if (data.Equals("0") && GPSFixed != false)
                     {
-                        lRPi.Content = "Critical Error";
-                        gRPi.Background = brushItemError;
-                    });
-                    rPiState = 2;
-                }
-                if (rPiState == 0 && rPiMuted == false) player.Play();
-            }
-            else if (code.Equals("GP")) // GPS
-            {
-                if (data.Equals("0") && GPSFixed != false)
-                {
-                    // GPS no fix
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                        // GPS no fix
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lGPS.Content = "No Fix";
+                            iGPS.Source = imsGPSNoFix;
+                            gGPS.Background = brushItemError;
+                        });
+                        GPSFixed = false;
+                    }
+                    else if (data.Equals("1"))
                     {
-                        lGPS.Content = "No Fix";
-                        iGPS.Source = imsGPSNoFix;
-                        gGPS.Background = brushItemError;
-                    });
-                    GPSFixed = false;
-                }
-                else if (data.Equals("1"))
-                {
-                    // GPS fix
-                    Dispatcher.Invoke((Action)delegate () // Update the UI
-                    {
-                        lGPS.Content = data;
-                        iGPS.Source = imsGPSFix;
-                        gGPS.Background = brushItem;
-                    });
+                        // GPS fix
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lGPS.Content = data;
+                            iGPS.Source = imsGPSFix;
+                            gGPS.Background = brushItem;
+                        });
 
-                    if (GPSFixed != true) // Update the UI only if this is the first time going 
-                    {
-                        GPSFixed = true;
+                        if (GPSFixed != true) // Update the UI only if this is the first time going 
+                        {
+                            GPSFixed = true;
+                        }
                     }
                 }
-            }
-            else if (code.Equals("CP"))
-            {
-                // Compass
-                Dispatcher.Invoke((Action)delegate () // Update the UI
+                else if (code.Equals("CP"))
                 {
-                    lCompass.Content = data + "°";
-                    gCompass.Background = brushItem;
-                });
-            }
-            else if (code.Equals("WV"))
-            {
-                // Wind Vane
-                Dispatcher.Invoke((Action)delegate () // Update the UI
+                    // Compass
+                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                    {
+                        lCompass.Content = data + "°";
+                        gCompass.Background = brushItem;
+                    });
+                }
+                else if (code.Equals("WV"))
                 {
-                    lWind.Content = data + "°";
-                    gWind.Background = brushItem;
-                });
+                    // Wind Vane
+                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                    {
+                        lWind.Content = data + "°";
+                        gWind.Background = brushItem;
+                    });
+                }
+                else if (code.Equals("TM"))
+                {
+                    // Temperature
+                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                    {
+                        lTemp.Content = data + "°C";
+                        gTemp.Background = brushItem;
+                        Int32.TryParse(data, out int temp); // Convert the temperature string to an integer
+                        if (temp > 40) gTemp.Background = brushItemError;
+                    });
+                }
             }
         }
 
 
-        private void sendTransmission(string code, string message)
+        private void sendTransmission(string code, string message) // Send a transmission to the Mega using the defined communication format
         {
-            if (myPort != null && myPort.IsOpen)
+            if (myPort != null && myPort.IsOpen) // Only write if the port is open (xbee connected)
             {
                 myPort.Write(code + message + ";");
-                if (currentState == 2)
+                if (currentState == 2) // If the boat is currently connected, also assume the command is recieved by the boat and update the UI
                 {
                     if (code.Equals("03"))
                     {
@@ -513,20 +534,27 @@ namespace QMAST
                             sRudder.Value = 90;
                         }
                     }
-                    else if (code.Equals("CP") && message.Equals("?0"))
-                    {
-                        gCompass.Background = brushItemError;
-                        lCompass.Content = "Reporting Disabled";
-                    }
-                    else if (code.Equals("WV") && message.Equals("?0"))
-                    {
-                        gWind.Background = brushItemError;
-                        lWind.Content = "Reporting Disabled";
-                    }
-                    else if (code.Equals("GP") && message.Equals("?0"))
-                    {
-                        gGPS.Background = brushItemError;
-                        lGPS.Content = "Reporting Disabled";
+                    else if (message.Equals("?0")) { // If the command is to stop updating a sensor, update the UI to reflect that
+                        if (code.Equals("CP"))
+                        {
+                            gCompass.Background = brushItemError;
+                            lCompass.Content = "Reporting Disabled";
+                        }
+                        else if (code.Equals("WV"))
+                        {
+                            gWind.Background = brushItemError;
+                            lWind.Content = "Reporting Disabled";
+                        }
+                        else if (code.Equals("GP"))
+                        {
+                            gGPS.Background = brushItemError;
+                            lGPS.Content = "Reporting Disabled";
+                        }
+                        else if (code.Equals("TM"))
+                        {
+                            gTemp.Background = brushItemError;
+                            lTemp.Content = "Reporting Disabled";
+                        }
                     }
                 }
             }

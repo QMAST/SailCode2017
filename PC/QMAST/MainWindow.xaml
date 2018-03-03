@@ -1,4 +1,4 @@
-﻿<Controls:MetroWindow x:Class="QMAST.MainWindow"
+﻿<Controls:MetroWindow x:Name="mwMain" x:Class="QMAST.MainWindow"
         xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -6,10 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:QMAST"
         mc:Ignorable="d"
-                      
         GlowBrush="#212121"
         BorderThickness="0"
-
         ShowIconOnTitleBar="True"
         Title="QMAST Control" Height="500" Width="600" Icon="icon.png" MinWidth="550" MinHeight="450">
 
@@ -35,6 +33,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -90,7 +89,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Compass" FontSize="12" />
+                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Heading" FontSize="12" />
                                 <Label x:Name="lCompass" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
                             </Grid>
                         </Grid>
@@ -107,7 +106,7 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Wind Vane" FontSize="12" />
+                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Wind Direction (Relative)" FontSize="12" />
                                 <Label x:Name="lWind" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
                             </Grid>
                         </Grid>
@@ -126,6 +125,23 @@
                                 </Grid.RowDefinitions>
                                 <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="GPS" FontSize="12" />
                                 <Label x:Name="lGPS" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="gTemp" Grid.Row="6" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image x:Name="iTemp" Height="25" Grid.Column="0" Source="thermometer.png"/>
+                            <Grid Grid.Column="1" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Temperature" FontSize="12" />
+                                <Label x:Name="lTemp" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
                             </Grid>
                         </Grid>
                     </Border>
@@ -170,7 +186,7 @@
 
                             <TextBlock Grid.Row="3" Margin="0,10,0,0" TextWrapping="Wrap" FontSize="12" ><Run Text="Rudder"/></TextBlock>
                             <TextBlock x:Name="tbRudder" Grid.Row="4" TextWrapping="Wrap" FontSize="18" ><Run Text="0 Degrees"/></TextBlock>
-                            <Slider x:Name="sRudder" Grid.Row="5" Margin="0,4,0,10" Style="{DynamicResource MahApps.Metro.Styles.Slider.Win10}" TickFrequency="10" TickPlacement="Both" Maximum="180" Value="90" SmallChange="10" Controls:SliderHelper.TrackValueFillBrush="#FF9D9D9D" Controls:SliderHelper.TrackValueFillPressedBrush="#FF9D9D9D" Controls:SliderHelper.TrackValueFillHoverBrush="#FF7F7F7F" IsEnabled="False" ValueChanged="sRudder_ValueChanged"/>
+                            <Slider x:Name="sRudder" Grid.Row="5" Margin="0,4,0,10" Style="{DynamicResource MahApps.Metro.Styles.Slider.Win10}" TickFrequency="10" TickPlacement="Both" Maximum="180" Value="90" SmallChange="10" MaxWidth="500" Controls:SliderHelper.TrackValueFillBrush="#FF9D9D9D" Controls:SliderHelper.TrackValueFillPressedBrush="#FF9D9D9D" Controls:SliderHelper.TrackValueFillHoverBrush="#FF7F7F7F" IsEnabled="False" ValueChanged="sRudder_ValueChanged"/>
 
                         </Grid>
                     </Grid>
