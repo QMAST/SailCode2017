@@ -100,7 +100,7 @@ void checkSensors() {
       if(GPS.lat == 'S') location = "-";
       location = location + String(GPS.latitude,4) + ",";
       if(GPS.lon == 'E') location = location + "-";
-      location = location + String(GPS.longitude,4) + ",";
+      location = location + String(GPS.longitude,4);
       setSensor("GP", location);
     }else{
       setSensor("GP", "0");

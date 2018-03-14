@@ -205,7 +205,7 @@
                         <Label Grid.Row="0" VerticalAlignment="Center"  Content="Wireless Console" FontSize="18" Margin="40,0,63,0" />
 
                         <ScrollViewer x:Name="svCons" Grid.Row="1" Margin="0,4,0,0" Visibility="Visible" VerticalAlignment="Stretch">
-                            <TextBlock x:Name="tbCons" TextWrapping="Wrap" Padding="4,0,4,0" Background="#80000000" Text="{Binding ConsOutput, Mode=OneWay}"/>
+                            <TextBlock x:Name="tbCons" TextWrapping="Wrap" Padding="4,0,4,0" Background="#80000000" Text="{Binding ConsOutput, Mode=OneWay}" Focusable="True"/>
                         </ScrollViewer>
 
 
