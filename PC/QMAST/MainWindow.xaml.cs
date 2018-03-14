@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
@@ -63,6 +64,8 @@ namespace QMAST
         int rPiState = -1; // Current state of the Raspberry Pi
         bool GPSFixed = false; // If the GPS is connected
 
+        static string logName = DateTime.Now.ToString("yyyy-MM-dd-H-mm-ss") + ".txt";
+
         public MainWindow()
         {
             InitializeComponent(); // Build UI
@@ -89,7 +92,27 @@ namespace QMAST
             boatHeartbeatTimer = new System.Windows.Threading.DispatcherTimer();
             boatHeartbeatTimer.Interval = TimeSpan.FromMilliseconds(6000);
             boatHeartbeatTimer.Tick += new EventHandler(boatHeartbeatTimer_Tick);
+            tbCons.Text = logName;
+            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\QMAST\\");
+            
         }
+
+        private static void Log(string logMessage)
+        {
+            StreamWriter sw = File.AppendText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\QMAST\\" + logName);
+            try
+            {
+                string logLine = System.String.Format(
+                    "{0:G}, {1}", DateTime.Now, logMessage);
+                sw.WriteLine(logLine);
+            }
+            finally
+            {
+                sw.Close();
+            }
+
+        }
+
 
         private void portTimer_Tick(object sender, EventArgs e) // Invoked for each "tick" of the XBee port monitoring timer
         {
@@ -316,6 +339,7 @@ namespace QMAST
                                 string code = command.Substring(0, 2);
                                 string data = command.Substring(2);
                                 consPrintln(code + ": " + data);
+                                Log(code + ": " + data);
                                 // Execute the completed message on the UI thread
                                 executeTransmission(code, data);
                             }
@@ -443,7 +467,7 @@ namespace QMAST
                 }
                 else if (code.Equals("GP")) // GPS
                 {
-                    if (data.Equals("0") && GPSFixed != false)
+                    if (data.Equals("0") )
                     {
                         // GPS no fix
                         Dispatcher.Invoke((Action)delegate () // Update the UI
@@ -454,7 +478,7 @@ namespace QMAST
                         });
                         GPSFixed = false;
                     }
-                    else if (data.Equals("1"))
+                    else
                     {
                         // GPS fix
                         Dispatcher.Invoke((Action)delegate () // Update the UI
@@ -510,6 +534,7 @@ namespace QMAST
                 myPort.Write(code + message + ";");
                 if (currentState == 2) // If the boat is currently connected, also assume the command is recieved by the boat and update the UI
                 {
+                    Log("> " + code + ": " + message);
                     if (code.Equals("03"))
                     {
                         // If the message is about overriding the remote control
@@ -571,9 +596,9 @@ namespace QMAST
             {
                 consoleOutputBuffer.Append(message);
 
-                if (consoleOutputBuffer.ToString().Length > 1000)
+                if (consoleOutputBuffer.ToString().Length > 100000)
                 {
-                    consoleOutputBuffer.Remove(0, consoleOutputBuffer.ToString().Length - 1000);
+                    consoleOutputBuffer.Remove(0, consoleOutputBuffer.ToString().Length - 100000);
                 }
 
                 Dispatcher.Invoke((Action)delegate ()
@@ -582,7 +607,6 @@ namespace QMAST
                     svCons.ScrollToBottom();
                 });
             }
-
         }
 
         private void sServOverride_Checked(object sender, RoutedEventArgs e) // Override the servo by sending the disable message

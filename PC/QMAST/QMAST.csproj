@@ -187,7 +187,6 @@
     <Resource Include="logo.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Asset 1.svg" />
     <Resource Include="thermometer.png" />
     <Resource Include="icon.png" />
     <Resource Include="volume-off.png" />
