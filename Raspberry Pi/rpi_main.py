@@ -79,13 +79,14 @@ def main():
         # Get the callback that will read the message
         callback = reader[subject]
 
-        bytes_written = read_until_semicolon(io, buffer, buffer_size)
-        if bytes_written == -1:
+        # Read the message into the buffer
+        bytes_read = read_until_semicolon(io, buffer, buffer_size)
+        if bytes_read == -1:
             logging.log(
-                "Recieved message is does not terminate: '{}'".format(buffer))
+                "Recieved message does not terminate: '{}'".format(buffer))
             continue
 
-        callback(buffer[:bytes_written])
+        callback(buffer[:bytes_read])
 
     io.close()
 
