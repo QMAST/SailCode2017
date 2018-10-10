@@ -53,3 +53,7 @@ Arduino/QMAST_Main/.vscode/arduino.json
 # Temp build directory
 Arduino/QMAST_Main/build/
 Arduino/build/
+
+#  Python related files
+.mypy_cache/
+__pycache__/
