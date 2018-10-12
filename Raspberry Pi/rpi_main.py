@@ -6,7 +6,10 @@ import threading
 
 class State:
     """
-    Class that contains the state of the sailboat.
+    Class that contains and and can update the state of the sailboat.
+
+    Args:
+        writer (ThreadsafeSerialWriter): The writer to send the messages too
 
     Attributes:
         is_gps_online (bool): Whether is the gps is online or not.
@@ -34,8 +37,12 @@ class State:
         rpi_autopilot_enabled (bool): Whether autopilot is enabled for the rpi.
 
         rpi_autopilot_mode (int): The current autopilot mode of the RPI.
+
+        callbacks (dict): Dictionary that will return a callback that will
+            handle the given message based on the subject. Note, the message
+            will be a bytearray and will not contain the semicolon.
     """
-    def __init__(self):
+    def __init__(self, writer):
         self.is_gps_online = False
         self.gps_coordinates = (0, 0)
         self.compass_angle = 0
@@ -48,6 +55,94 @@ class State:
         self.mega_error = False
         self.rpi_autopilot_enabled = False
         self.rpi_autopilot_mode = 0
+
+        # The handling for the A2, A3 commands are not implemented yet
+        self.callbacks = {
+                b'GP': self._handle_GPS,
+                b'CP': self._handle_compass,
+                b'TM': self._handle_temperature,
+                b'WV': self._handle_windvane,
+                b'PX': self._handle_pixy,
+                b'LD': self._handle_lidar,
+                b'00': self._handle_device_mode,
+                b'01': self._handle_mega_powering_on,
+                b'08': self._handle_mega_error,
+                b'A0': self._handle_rpi_autopilot_enable,
+                b'A1': self._handle_rpi_autopilot_mode,
+            }
+
+        self.writer = writer
+
+    def handle_message(self, subject, message):
+        """
+        Handles the incoming message.
+        """
+        self.callbacks[subject](message)
+
+    def _handle_GPS(self, message):
+        if len(message) == 1:
+            logging.info("Recieved gps state: {}".format(message))
+            self.is_gps_online = int(message) == 1
+        else:
+            logging.info("Recieved gps coordinates: {}".format(message))
+            x, y = self.message.split(b',')
+            self.gps_coordinates = (float(x), float(y))
+
+    def _handle_compass(self, message):
+        logging.info("Recieved compass angle: {}".format(message))
+        self.compass_angle = float(message)
+
+    def _handle_temperature(self, message):
+        logging.info("Recieved temperature: {}".format(message))
+        self.temperature = float(message)
+
+    def _handle_windvane(self, message):
+        logging.info("Recieved windvane angle: {}".format(message))
+        self.windvane_angle = float(message)
+
+    def _handle_pixy(self, message):
+        logging.info("Recieved pixy location: {}".format(message))
+        self.pixy_location = int(message)
+
+    def _handle_lidar(self, message):
+        # Not implemented
+        pass
+
+    def _handle_device_mode(self, message):
+        logging.info("Recieved device mode from mega: {}".format(message))
+        if message == b'?':
+            logging.info("Sending alive state to mega")
+            self.writer.write(b'00', b'1')
+        else:
+            self.mega_state = int(message)
+
+    def _handle_mega_powering_on(self, message):
+        logging.info("Recieved mega powering on: {}".format(message))
+        self.mega_powered_on = int(message) == 1
+
+    def _handle_mega_error(self, message):
+        logging.info("Recieved error from mega: {}".format(message))
+        self.mega_error = int(message) == 1
+
+    def _handle_rpi_autopilot_enable(self, message):
+        logging.info("Recieved autopilot enable command: {}".format(message))
+        if message == b'1':
+            # Assume autopilot can be enabled
+            self.rpi_autopilot_enabled = True
+            logging.info("Enabling autopilot")
+            self.writer.write(b'A0', b'1')
+        elif message == b'0':
+            logging.info("Disabpling autopilot")
+            self.rpi_autopilot_enabled = False
+
+    def _handle_rpi_autopilot_mode(self, message):
+        logging.info("Recieved autopilot mode command: {}".format(message))
+        if message == b'?':
+            autopilot_mode_as_bytes = \
+                    str(self.rpi_autopilot_mode).encode('utf-8')
+            self.writer.write(b'A1', autopilot_mode_as_bytes)
+        else:
+            self.rpi_autopilot_mode = int(message)
 
 
 class ThreadsafeSerialWriter:
@@ -91,109 +186,18 @@ class SerialReader:
             given port, one should use the writer object to send a message for
             thread safety.
 
-        writer (ThreadsafeSerialWriter): Class that will be used to write to a
-            serial port.
-
-        state (State): The state of the sailboat that will be updated.
+        state (State): The state of the sailboat that the messages will be send
+            to.
 
     Attributes:
-        callbacks (dict): Dictionary that will return a callback that will
-            handle the given message. Note, the message will be a bytearray
-            and will not contain the semicolon
-
         buffer (bytearray): Buffer where serial data is stored
 
     """
-    def __init__(self, port, writer, state):
-
-        # The handling for the A2, A3 commands are not implemented yet
-        self.callbacks = {
-                "GP": self._handle_GPS,
-                "CP": self._handle_compass,
-                "TM": self._handle_temperature,
-                "WV": self._handle_windvane,
-                "PX": self._handle_pixy,
-                "LD": self._handle_lidar,
-                "00": self._handle_device_mode,
-                "01": self._handle_mega_powering_on,
-                "08": self._handle_mega_error,
-                "A0": self._handle_rpi_autopilot_enable,
-                "A1": self._handle_rpi_autopilot_mode,
-            }
-
-        # Serial object that can be used to relay messages
-        # back to the MEGA.
+    def __init__(self, port, state):
         self.port = port
         self.buffer_size = 1024
         self.buffer = bytearray(self.buffer_size)
-
         self.state = state
-        self.writer = writer
-
-    def _handle_GPS(self, message):
-        if len(message) == 1:
-            logging.info("Recieved gps state: {}".format(message))
-            self.state.is_gps_online = int(message) == 1
-        else:
-            logging.info("Recieved gps coordinates: {}".format(message))
-            x, y = self.message.split(b',')
-            self.state.gps_coordinates = (float(x), float(y))
-
-    def _handle_compass(self, message):
-        logging.info("Recieved compass angle: {}".format(message))
-        self.state.compass_angle = float(message)
-
-    def _handle_temperature(self, message):
-        logging.info("Recieved temperature: {}".format(message))
-        self.state.temperature = float(message)
-
-    def _handle_windvane(self, message):
-        logging.info("Recieved windvane angle: {}".format(message))
-        self.state.windvane_angle = float(message)
-
-    def _handle_pixy(self, message):
-        logging.info("Recieved pixy location: {}".format(message))
-        self.state.pixy_location = int(message)
-
-    def _handle_lidar(self, message):
-        # Not implemented
-        pass
-
-    def _handle_device_mode(self, message):
-        logging.info("Recieved device mode from mega: {}".format(message))
-        if message == b'?':
-            logging.info("Sending alive state to mega")
-            self.writer.write(b'00', b'1')
-        else:
-            self.state.mega_state = int(message)
-
-    def _handle_mega_powering_on(self, message):
-        logging.info("Recieved mega powering on: {}".format(message))
-        self.state.mega_powered_on = int(message) == 1
-
-    def _handle_mega_error(self, message):
-        logging.info("Recieved error from mega: {}".format(message))
-        self.state.mega_error = int(message) == 1
-
-    def _handle_rpi_autopilot_enable(self, message):
-        logging.info("Recieved autopilot enable command: {}".format(message))
-        if message == b'1':
-            # Assume autopilot can be enabled
-            self.state.rpi_autopilot_enabled = True
-            logging.info("Enabling autopilot")
-            self.writer.write(b'A0', b'1')
-        elif message == b'0':
-            logging.info("Disabpling autopilot")
-            self.state.rpi_autopilot_enabled = False
-
-    def _handle_rpi_autopilot_mode(self, message):
-        logging.info("Recieved autopilot mode command: {}".format(message))
-        if message == b'?':
-            autopilot_mode_as_bytes = \
-                    str(self.state.rpi_autopilot_mode).encode('utf-8')
-            self.writer.write(b'A1', autopilot_mode_as_bytes)
-        else:
-            self.state.rpi_autopilot_mode = int(message)
 
     def _read_until_semicolon(self):
         """
@@ -215,11 +219,7 @@ class SerialReader:
         serial object. This function should be called in a while loop in order
         to read messages forever.
         """
-        subject = self.port.read(2).decode()
-        if subject not in self.callbacks:
-            # The subject is malformed
-            logging.info("Malformed subject:'{}'".format(subject))
-            return
+        subject = self.port.read(2)
 
         # Read the message into the buffer
         bytes_read = self._read_until_semicolon()
@@ -227,10 +227,9 @@ class SerialReader:
             logging.info(
                 "Recieved message does not terminate: '{}'"
                 .format(self.buffer))
+            return
 
-        self.callbacks[subject](self.buffer[:bytes_read])
-
-        return
+        self.state.handle_message(subject, self.buffer[:bytes_read])
 
 
 class Controller:
@@ -267,7 +266,6 @@ def main():
     bytesize = serial.EIGHTBITS
     parity = serial.PARITY_NONE
     stopbits = serial.STOPBITS_ONE
-    logging.info("wad")
 
     # Create the serial object that will be read and written to.
     io = serial.Serial(serial_port, baudrate, bytesize, parity, stopbits)
@@ -277,7 +275,7 @@ def main():
     writer = ThreadsafeSerialWriter(io)
 
     # Object for keeping track of the state of the sailboat
-    state = State()
+    state = State(writer)
 
     # Uses for directly controlling the MEGA (e.g. Servos).
     controller = Controller(writer, state)
@@ -288,7 +286,7 @@ def main():
 
     # Create the object that reads serial data. This can be implemented in
     # a seperate thread if need be.
-    reader = SerialReader(io, writer, state)
+    reader = SerialReader(io, state)
     while True:
         reader.listen()
 
