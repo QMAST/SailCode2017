@@ -28,6 +28,10 @@ class State:
         mega_powered_on (bool): True if  the mega is powered on.
 
         mega_error (bool): True if the mega sends a state of critical failure.
+
+        rpi_autopilot_enabled (bool): Whether autopilot is enabled for the rpi.
+
+        rpi_autopilot_mode (int): The current autopilot mode of the RPI.
     """
     def __init__(self):
         self.is_gps_online = False
@@ -40,6 +44,8 @@ class State:
         self.critical_failure = False
         self.mega_powered_on = False
         self.mega_error = False
+        self.rpi_autopilot_enabled = False
+        self.rpi_autopilot_mode = 0
 
 
 class Reader:
@@ -48,6 +54,8 @@ class Reader:
 
     Args:
         io (serial.Serial): Serial that this class will listen and write to.
+
+        writer (Writer): Class that will be used to write to a serial port.
 
     Attributes:
         callbacks (dict): Dictionary that will return a callback that will
@@ -59,6 +67,8 @@ class Reader:
         state (State): The state of the sailboat.
     """
     def __init__(self, io):
+
+        # The handling for the A2, A3 commands are not implemented yet
         self.callbacks = {
                 "GP": self._handle_GPS,
                 "CP": self._handle_compass,
@@ -69,6 +79,8 @@ class Reader:
                 "00": self._handle_device_mode,
                 "01": self._handle_mega_powering_on,
                 "08": self._handle_mega_error,
+                "A0": self._handle_rpi_autopilot_enable,
+                "A1": self._handle_rpi_autopilot_mode,
             }
 
         # Serial object that can be used to relay messages
@@ -109,7 +121,7 @@ class Reader:
         pass
 
     def _handle_device_mode(self, message):
-        logging.log("Recieved device mode from mega".format(message))
+        logging.log("Recieved device mode from mega: {}".format(message))
         if message == b'?':
             logging.log("Sending alive state to mega")
             self.io.write(b"001;")
@@ -117,10 +129,33 @@ class Reader:
             self.state.mega_state = int(message)
 
     def _handle_mega_powering_on(self, message):
+        logging.log("Recieved mega powering on: {}".format(message))
         self.state.mega_powered_on = int(message) == 1
 
     def _handle_mega_error(self, message):
+        logging.log("Recieved error from mega: {}".format(message))
         self.state.mega_error = int(message) == 1
+
+    def _handle_rpi_autopilot_enable(self, message):
+        logging.log("Recieved autopilot enable command: {}".format(message))
+        if message == b'1':
+            # Assume autopilot can be enabled
+            self.state.rpi_autopilot_enabled = True
+            logging.log("Enabling autopilot")
+            self.io.write(b"A01;")
+        elif message == b'0':
+            logging.log("Disabpling autopilot")
+            self.state.rpi_autopilot_enabled = False
+
+    def _handle_rpi_autopilot_mode(self, message):
+        logging.log("Recieved autopilot mode command: {}".format(message))
+        if message == b'?':
+            autopilot_mode_as_bytes = \
+                    bytes(str(self.state.rpi_autopilot_mode).encode('utf-8'))
+            response = b'A1' + autopilot_mode_as_bytes + b';'
+            self.io.write(response)
+        else:
+            self.state.rpi_autopilot_mode = int(message)
 
     def _read_until_semicolon(self):
         """
