@@ -1,8 +1,8 @@
 import unittest
 import sys
 sys.path.append('..')
-from rpi_main import Controller, State
-from stubs import StubThreadsafeSerialWriter
+from rpi_main import Controller, State  # noqa: E402
+from stubs import StubThreadsafeSerialWriter  # noqa: E402
 
 
 class TestController(unittest.TestCase):
