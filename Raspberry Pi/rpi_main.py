@@ -6,7 +6,8 @@ import threading
 
 class State:
     """
-    Class that contains and and can update the state of the sailboat.
+    Class that contains and and can update the state of the sailboat. Can be
+    shared across classes.
 
     Args:
         writer (ThreadsafeSerialWriter): The writer to send the messages too
@@ -85,7 +86,7 @@ class State:
             self.is_gps_online = int(message) == 1
         else:
             logging.info("Recieved gps coordinates: {}".format(message))
-            x, y = self.message.split(b',')
+            x, y = message.split(b',')
             self.gps_coordinates = (float(x), float(y))
 
     def _handle_compass(self, message):
@@ -126,14 +127,7 @@ class State:
 
     def _handle_rpi_autopilot_enable(self, message):
         logging.info("Recieved autopilot enable command: {}".format(message))
-        if message == b'1':
-            # Assume autopilot can be enabled
-            self.rpi_autopilot_enabled = True
-            logging.info("Enabling autopilot")
-            self.writer.write(b'A0', b'1')
-        elif message == b'0':
-            logging.info("Disabpling autopilot")
-            self.rpi_autopilot_enabled = False
+        self.rpi_autopilot_enabled = int(message) == 1
 
     def _handle_rpi_autopilot_mode(self, message):
         logging.info("Recieved autopilot mode command: {}".format(message))
@@ -186,8 +180,8 @@ class SerialReader:
             given port, one should use the writer object to send a message for
             thread safety.
 
-        state (State): The state of the sailboat that the messages will be send
-            to.
+        state (State): The state of the sailboat that the messages will be
+            relayed to.
 
     Attributes:
         buffer (bytearray): Buffer where serial data is stored
