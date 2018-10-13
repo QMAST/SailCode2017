@@ -2,6 +2,7 @@
 Should contain stub classes that are useful for testing.
 """
 
+
 class StubThreadsafeSerialWriter:
     """
     Stub class for simulating a ThreadsafeSerialWriter. When a message is
@@ -20,5 +21,3 @@ class StubThreadsafeSerialWriter:
     def write(self, subject, message):
         self.subject_written = subject
         self.message_written = message
-
-
