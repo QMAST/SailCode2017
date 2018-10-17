@@ -6,7 +6,7 @@ This file should contain documentation for the Raspberry Pi code.
 _Add virtualenv instructions here_
 
 ## Class overview
-![class-diagram](./Class\ diagram\ v1.png)
+![class-diagram](./class_diagram_v1.png)
 
 #### rpi\_main.py - ThreadsafeSerialWriter
 Writes to a serial port in a thread safe manner. If two threads try to write to the same port, then the messages will be send properly without getting jumbled together. There should ever only be one instance of this class per serial port. All objects that write to the same port should share the ThreadSafeSerialWriter instance. 
