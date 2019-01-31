@@ -1,7 +1,8 @@
 import unittest
 import sys
 sys.path.append('..')
-from rpi_main import Controller, State  # noqa: E402
+from automatic_control import Controller  # noqa: E402
+from state import State  # noqa: E402
 from stubs import StubThreadsafeSerialWriter  # noqa: E402
 
 
@@ -13,7 +14,7 @@ class TestController(unittest.TestCase):
         super().__init__(*args, **kwargs)
 
         self.writer = StubThreadsafeSerialWriter()
-        self.controller = Controller(self.writer, State(self.writer))
+        self.controller = Controller(self.writer)
 
     def test_actuate_winch(self):
         self.controller.actuate_winch(55)

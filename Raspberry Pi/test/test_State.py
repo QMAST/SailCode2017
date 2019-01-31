@@ -1,7 +1,7 @@
 import unittest
 import sys
 sys.path.append('..')
-from rpi_main import State  # noqa: E402
+from state import State  # noqa: E402
 from stubs import StubThreadsafeSerialWriter  # noqa: E402
 
 
@@ -14,6 +14,10 @@ class TestState(unittest.TestCase):
 
         self.writer = StubThreadsafeSerialWriter()
         self.state = State(self.writer)
+
+    def test_invalid(self):
+        self.state.handle_message(b'asdasd', b'asdas')
+        self.assertLogs(level='ERROR')
 
     def test_GP(self):
         self.state.handle_message(b'GP', b'0')
