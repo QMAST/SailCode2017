@@ -5,6 +5,11 @@ This file should contain documentation for the Raspberry Pi code.
 ## How to setup dev environment
 _Add virtualenv instructions here_
 
+To start the program, run:
+`python3 rpi_main.py`
+
+Two threads will be spawned. The first thread is a daemon that reads from the serial port and updates the state. The second (main) thread reads from the state and will send messages to the boat.
+
 ## Class overview
 ![class-diagram](./img/class_diagram_v1.png)
 
