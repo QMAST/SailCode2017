@@ -37,6 +37,9 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Border Grid.Row="0" Padding="10,4,10,4" Height="125" Margin="0,0,0,1" Background="#80000000" Visibility="Collapsed">
 
@@ -77,7 +80,24 @@
                             <Image x:Name="imRPi" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Top" Height="16" Source="volume-off.png" Focusable="True" TouchUp="imRPi_Tap" MouseUp="imRPi_Tap" Margin="0,23.9,0,0" ToolTip="Mute or unmute error alarm" StylusUp="imRPi_Tap"/>
                         </Grid>
                     </Border>
-                    <Border x:Name="gCompass" Grid.Row="3" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
+                    <Border x:Name="gRemote" Grid.Row="3" Background="#CCB71C1C" Padding="14,8,10,8" Margin="0,0,0,1" VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Height="25" Grid.Column="0" Source="xbee_unplugged.png"/>
+                            <Grid Grid.Column="1" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Remote Control" FontSize="12" />
+                                <Label x:Name="lRemote" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="gCompass" Grid.Row="4" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="25" />
@@ -94,7 +114,7 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <Border x:Name="gWind" Grid.Row="4" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C"  VerticalAlignment="Top">
+                    <Border x:Name="gWind" Grid.Row="5" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C"  VerticalAlignment="Top">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="25" />
@@ -111,7 +131,24 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <Border x:Name="gGPS" Grid.Row="5" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
+                    <Border x:Name="gWindSpeed" Grid.Row="6" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C"  VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Height="25" Grid.Column="0" Source="weather-windy.png"/>
+                            <Grid Grid.Column="1" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Wind Speed" FontSize="12" />
+                                <Label x:Name="lWindSpeed" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="gGPS" Grid.Row="7" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="25" />
@@ -128,7 +165,24 @@
                             </Grid>
                         </Grid>
                     </Border>
-                    <Border x:Name="gTemp" Grid.Row="6" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
+                    <Border x:Name="gGPSSpeed" Grid.Row="8" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="25" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image x:Name="iGPSSpeed" Height="25" Grid.Column="0" Source="map-marker-off.png"/>
+                            <Grid Grid.Column="1" VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Padding="14,0,0,0"  Grid.Row="0" VerticalAlignment="Top"  Content="Boat Speed" FontSize="12" />
+                                <Label x:Name="lGPSSpeed" Padding="14,0,0,0" Grid.Row="1" VerticalAlignment="Top" Content="Unknown" FontSize="18" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                    <Border x:Name="gTemp" Grid.Row="9" Padding="14,8,10,8" Margin="0,0,0,1" Background="#CCB71C1C" VerticalAlignment="Top">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="25" />

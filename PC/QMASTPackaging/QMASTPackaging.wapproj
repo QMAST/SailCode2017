@@ -40,7 +40,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <PackageCertificateKeyFile>QMASTPackaging_TemporaryKey.pfx</PackageCertificateKeyFile>
     <EntryPointProjectUniqueName>..\QMAST\QMAST.csproj</EntryPointProjectUniqueName>
-    <PackageCertificateThumbprint>C4EBC7509E642E68AA94365858B53CE3E357E8B8</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>475580BDB862166EDCBB8191C626CDCA76BF8D06</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxPackageDir>C:\Users\angel\OneDrive\Desktop\</AppxPackageDir>
     <AppxBundlePlatforms>neutral</AppxBundlePlatforms>

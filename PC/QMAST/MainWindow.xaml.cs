@@ -99,17 +99,18 @@ namespace QMAST
 
         private static void Log(string logMessage)
         {
-            StreamWriter sw = File.AppendText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\QMAST\\" + logName);
+            /*StreamWriter sw = null;
             try
             {
+                sw = File.AppendText(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\QMAST\\" + logName);
                 string logLine = System.String.Format(
                     "{0:G}, {1}", DateTime.Now, logMessage);
                 sw.WriteLine(logLine);
             }
             finally
             {
-                sw.Close();
-            }
+                if(sw != null) sw.Close();
+            }*/
 
         }
 
@@ -465,6 +466,36 @@ namespace QMAST
                     }
                     if (rPiState == 0 && rPiMuted == false) player.Play();
                 }
+                else if (code.Equals("RM")) // Remote
+                {
+                    if (data.Equals("0"))
+                    {
+                        // Remote not connected
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lRemote.Content = "Not Connected";
+                            gRemote.Background = brushItemError;
+                        });
+                    }
+                    else if (data.Equals("1"))
+                    {
+                        // Remote connected
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lRemote.Content = "Disarmed";
+                            gRemote.Background = brushItem;
+                        });
+                    }
+                    else if (data.Equals("2"))
+                    {
+                        // Remote connected
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lRemote.Content = "Armed";
+                            gRemote.Background = brushItem;
+                        });
+                    }
+                }
                 else if (code.Equals("GP")) // GPS
                 {
                     if (data.Equals("0") )
@@ -494,6 +525,29 @@ namespace QMAST
                         }
                     }
                 }
+                else if (code.Equals("SP")) // GPS
+                {
+                    if (data.Equals("0"))
+                    {
+                        // GPS no fix
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lGPSSpeed.Content = "No Fix";
+                            iGPSSpeed.Source = imsGPSNoFix;
+                            gGPSSpeed.Background = brushItemError;
+                        });
+                    }
+                    else
+                    {
+                        // GPS fix
+                        Dispatcher.Invoke((Action)delegate () // Update the UI
+                        {
+                            lGPSSpeed.Content = data;
+                            iGPSSpeed.Source = imsGPSFix;
+                            gGPSSpeed.Background = brushItem;
+                        });
+                    }
+                }
                 else if (code.Equals("CP"))
                 {
                     // Compass
@@ -512,6 +566,15 @@ namespace QMAST
                         gWind.Background = brushItem;
                     });
                 }
+                else if (code.Equals("WS"))
+                {
+                    // Wind Vane
+                    Dispatcher.Invoke((Action)delegate () // Update the UI
+                    {
+                        lWindSpeed.Content = data + " Kn";
+                        gWindSpeed.Background = brushItem;
+                    });
+                }
                 else if (code.Equals("TM"))
                 {
                     // Temperature
@@ -522,6 +585,15 @@ namespace QMAST
                         Int32.TryParse(data, out int temp); // Convert the temperature string to an integer
                         if (temp > 40) gTemp.Background = brushItemError;
                     });
+                }
+                else if (code.Equals("A7"))
+                {
+                    player.Play();
+                    MessageBox.Show(data, "Autopilot Status", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+                else if (code.Equals("07"))
+                {
+                    MessageBox.Show(data, "Alert", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
